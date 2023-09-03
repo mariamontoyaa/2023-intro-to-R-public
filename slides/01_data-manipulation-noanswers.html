@@ -1,0 +1,2400 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>DATA MANIPULATION</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="INTRO TO R COURSE" />
+    <script src="01_data-manipulation-noanswers_files/header-attrs-2.24/header-attrs.js"></script>
+    <link href="01_data-manipulation-noanswers_files/remark-css-0.0.1/ninjutsu.css" rel="stylesheet" />
+    <link href="01_data-manipulation-noanswers_files/countdown-0.4.0/countdown.css" rel="stylesheet" />
+    <script src="01_data-manipulation-noanswers_files/countdown-0.4.0/countdown.js"></script>
+    <script src="01_data-manipulation-noanswers_files/htmlwidgets-1.6.1/htmlwidgets.js"></script>
+    <script src="01_data-manipulation-noanswers_files/viz-1.8.2/viz.js"></script>
+    <link href="01_data-manipulation-noanswers_files/DiagrammeR-styles-0.2/styles.css" rel="stylesheet" />
+    <script src="01_data-manipulation-noanswers_files/grViz-binding-1.0.10/grViz.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+&lt;style type="text/css"&gt;
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue:wght@400;700&amp;display=swap');
+pre {
+    display: block;
+    font-family: monospace;
+    white-space: pre;
+    margin: 1em 0px;
+    margin-top: 0em;
+    margin-right: 0px;
+    margin-bottom: 0em;
+    margin-left: 0px;
+    white-space: pre-wrap;
+}
+
+p {
+    line-height: 22px;
+}
+
+h1{
+  margin-bottom: -20px;
+}
+
+h2{
+  margin-bottom: -11px;
+}
+
+h3{
+  margin-bottom: -10px;
+}
+
+.emphasized {
+   font-size: 1.2em;
+   font-family: Nunito;
+}
+
+.greenemph {
+   font-size: 1.2em;
+   font-family: Nunito;
+   color: #69995D
+}
+
+.greenhead {
+   font-size: 35px;
+   font-family: Nunito;
+   color: #69995D
+}
+
+.nunito {
+   font-size: 25px;
+   font-family: Nunito;
+}
+
+.nunitosm {
+   font-family: Nunito;
+}
+.nunitosmgrey {
+   font-family: Nunito;
+   color: #E8E9E8
+}
+
+.invisible {
+   color: white;
+}
+
+.remark-code {
+background: #green;
+}
+.remark-slide-number {
+  font-size: 10pt;
+  margin-bottom: -11.6px;
+  margin-right: 10px;
+  color: #FFFFFF; /* white */
+  opacity: 0; /* default: 0.5 */
+}
+    
+
+&lt;/style&gt;
+
+
+
+
+
+
+
+&lt;br&gt;
+&lt;br&gt; 
+&lt;br&gt; 
+&lt;br&gt; 
+&lt;br&gt; 
+&lt;br&gt; 
+&lt;br&gt; 
+.center[
+# DATA MANIPULATION
+.nunito[LECTURE 1]
+.greenhead[INTRO TO R PROGRAMMING]
+
+**MARIA MONTOYA-AGUIRRE**
+
+M1 APE @ PARIS SCHOOL OF ECONOMICS
+]
+
+
+---
+&lt;br&gt;
+##WELCOME TO THE COURSE!
+.pull-left[
+&lt;span class="greenemph"&gt;**ABOUT ME**:&lt;/span&gt; 
+- PhD candidate at Paris School of Economics. Started APE in 2019! 
+- Working on (labor ∩ crime ∩ development) economics 
+- I've used R for +5 years now. 
+]
+
+.pull-right[
+&lt;span class="greenemph"&gt;**SOME ADVICE FOR M1**:&lt;/span&gt; 
+- Work consistently 
+- Take care of yourself 
+- Stay connected to the research
+- Look for the questions/problems you care about 
+]
+&lt;br&gt;
+&lt;br&gt;
+**Econ podcasts I like:**
+
+&lt;img src="inputs/01_planetmoney.jpeg" width="20%" /&gt;&lt;img src="inputs/01_theindicator.jpeg" width="20%" /&gt;&lt;img src="inputs/01_capitalisnt.png" width="20%" /&gt;&lt;img src="inputs/01_aearesearch.png" width="20%" /&gt;&lt;img src="inputs/01_voxtalks.jpg" width="20%" /&gt;
+
+---
+class:middle inverse
+.center[
+.nunito[
+# ABOUT YOU
+
+ WHAT IS YOUR NAME?
+ 
+ WHERE ARE YOU FROM?
+ 
+ ONE OF YOUR FAVORITE PROBLEMS
+ 
+]]
+---
+## ABOUT THE COURSE
+.emphasized[MAIN OBJECTIVE]
+
+Learning R programming to carry out your empirical homeworks and research projects.
+
+--
+
+.emphasized[STRUCTURE]
+
+ 4 sessions (2h each) designed to introduce you to the main steps in the data analysis (~ empirical research) pipeline:
+0. Data collection
+1. Data cleaning and tidying **(Today!)**
+2. Data analysis
+  - Data visualization **(Lecture 2)**
+  - Econometrics **(Lecture 4)**
+3. Report results &amp; publish code  **(Lecture 3)**
+
+One-break for you to follow the first lecture/tutorial of Econometrics I
+
+--
+
+.emphasized[COURSE WEBSITE]
+
+ https://github.com/mariamontoyaa/2023-intro-to-R-public 
+
+🚨 Read the class policies and instructions for asking for help. 
+ 
+ 
+---
+# AGENDA
+.nunitosm[
+.pull-left[
+- GETTING STARTED WITH R
+  - THE R STUDIO IDE
+  - OBJECTS AND FUNCTIONS
+  - IMPORTING DATA
+
+- ANATOMY OF A DATA FRAME
+  - SCALARS
+  - VECTORS
+  - DATAFRAMES
+  - SUBSETTING
+]
+
+.pull-right[
+- MANIPULATING DATA WITH {dplyr}
+  - PACKAGES
+  - MAIN FUNCTIONS
+  - `group_by()` vs. `summarise()`
+
+- THE DATA ANALYSIS PIPELINE
+  - A CHECKLIST FOR CLEANING DATA
+  - LOOKING FOR HELP
+]
+ ]
+---
+
+ 
+## GETTING STARTED WITH R
+Programming language and software environment for statistical computing and graphics. Widely used in Economics, Statistics and Biostatistics.
+
+  .pull-left[
+.greenemph[WHY SHOULD WE LEARN TO CODE?] 
+
+  Transparent, shareable and reproducible analysis
+  
+
+  ]
+  .pull-right[
+&lt;img src="inputs/01_learningr.png" width="1600" /&gt;
+  ]
+---
+ 
+## GETTING STARTED WITH R
+Programming language and software environment for statistical computing and graphics. Widely used in Economics, Statistics and Biostatistics.
+
+  .pull-left[
+.greenemph[WHY SHOULD WE LEARN TO CODE?] 
+
+  Transparent, shareable and reproducible analysis
+  
+.greenemph[WHY CHOOSE **R**?] &lt;br&gt;
+  - Free and open source. Development of features and fixes is fast
+  - Less specialized
+  - Easy to Google
+  - Pretty graphs (and [accidental art](https://twitter.com/accidental__aRt))
+  - Super versatile: pretty graphs, GIS integration for maps, web scrapping, machine learning, markdown, dashboards 
+
+  ]
+  .pull-right[
+&lt;img src="inputs/01_learningr.png" width="1600" /&gt;
+  ]
+---
+### THE **R** STUDIO **IDE** 
+An **Integrated Development Environment** provides the comprehensive facilities for programmers in an application
+
+&lt;img src="inputs/01_rstudio_ide.png" width="90%" /&gt;
+---
+### THE **R** STUDIO **IDE** 
+An **Integrated Development Environment** provides the comprehensive facilities for programmers in an application
+
+&lt;img src="inputs/01_rstudio-ide-parts.jpg" width="90%" /&gt;
+---
+### SOURCE
+.nunito[You'll spend most of you time here!] Where you write and save code  
+--
+(File &gt; New File &gt; R Script) 
+📌 **First thing:** Save your script! 
+--
+
+- An `#` allows to comment your code. Everything after it is ignored until a line break
+- Separate different commands with a **line break** for clarity. But, note that a space doesn't break a command. 
+
+--
+- Run and source buttons send code to the console to be executed 
+  - Run (from selection). Highlight the code  → `Ctrl + Enter`. If no code is selected it will run the line where the cursor is. 
+  - Source (run everything)
+
+--
+
+```r
+1 + 1 # Equals two?
+
+1 +   # Also equals two? 
+  1   # R recognizes that you are not done yet! 
+      
+1
++ 1   # Equals one. 
+```
+---
+### SOURCE
+.nunito[You'll spend most of you time here!] Where you write and save code  
+(File &gt; New File &gt; R Script) 
+📌 **First thing:** Save your script! 
+
+- An `#` allows to comment your code. Everything after it is ignored until a line break
+- Separate different commands with a **line break** for clarity. But, note that a space doesn't break a command. 
+- Run and source buttons send code to the console to be executed 
+  - Run (from selection). Highlight the code  → `Ctrl + Enter`. If no code is selected it will run the line where the cursor is. 
+  - Source (run everything)
+
+
+
+```r
+1 + 1 # Equals two?
+```
+
+```
+## [1] 2
+```
+
+```r
+1 +   # Also equals two? 
+  1   # R recognizes that you are not done yet! 
+```
+
+```
+## [1] 2
+```
+
+```r
+1
+```
+
+```
+## [1] 1
+```
+
+```r
++ 1   # Equals one. 
+```
+
+```
+## [1] 1
+```
+---
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+### CONSOLE
+.nunito[The heart of the operation 🫀] 
+
+Here is where you communicate with R to get it to do things. 
+
+--
+- You write after the `&gt;` prompt. It means that R is ready for a new instruction. Press enter and R will execute the code.
+- You can write there directly for quick calculations or fleeting requests you don't need to save. 
+
+--
+
+.greenemph[**WRITE MOST OF YOUR CODE IN THE SOURCE PANEL**] 
+
+---
+&lt;br&gt;
+&lt;br&gt; 
+### ENVIRONMENT
+.nunito[Where we keep track of things 🖇️]
+
+- Data analysis requires manipulating different *objects*: datasets, vectors, functions, etc. Here is where we keep track of them. 
+
+--
+- R is an **object-oriented** language. We'll talk about this in a bit. What it means is that we can see everything we are working with and things are only stored when we ask to.
+
+--
+- We **assign** a value to an object with `&lt;-` the assignment operator
+
+
+--
+**See what happens in the environment panel when we run this:**
+
+```r
+5 + 1
+x &lt;- 5    # Assigning the value 
+x
+x + 1
+x
+x &lt;- x + 1 # Assigning a new value 
+x 
+```
+
+---
+&lt;br&gt;
+### ENVIRONMENT
+.nunito[Where we keep track of things 🖇️]
+
+- Data analysis requires manipulating different *objects*: datasets, vectors, functions, etc. Here is where we keep track of them. 
+- R is an **object-oriented** language. We'll talk about this in a bit. What it means is that we can see everything we are working with and things are only stored when we ask to.
+- We **assign** a value to an object with `&lt;-` the assignment operator
+
+**See what happens in the environment panel when we run this:**
+
+```r
+5 + 1
+```
+
+```
+## [1] 6
+```
+
+```r
+x &lt;- 5    # Assigning the value 
+x
+```
+
+```
+## [1] 5
+```
+
+```r
+x + 1
+```
+
+```
+## [1] 6
+```
+
+```r
+x
+```
+
+```
+## [1] 5
+```
+
+```r
+x &lt;- x + 1 # Assigning a new value 
+x 
+```
+
+```
+## [1] 6
+```
+
+---
+class: middle
+### FILES/ PLOTS/ ... PANEL
+.nunito[Many helpful things here 🗄️]
+- Files shows your *working directory*, the default location of any files you read into or save out of R  `getwd()`
+  - We'll see more about how to work with directories and R Projects in **Lecture 3**
+
+--
+- Plots / Viewer 
+- Packages
+- Help 
+  - Add a `?` in front of any function to get help: `?getwd()` 
+
+---
+## OBJECTS AND FUNCTIONS
+R revolves around 2 things: **objects and functions** (things and procedures?)
+
+.pull-left[
+- **Objects** are vectors, dataframes, regression models. They have attributes. 
+&lt;br&gt;
+- **Functions** are procedures that typically take one or more objects as arguments (inputs), do something with them and return a new object 
+
+]
+
+.pull-right[
+
+
+
+```r
+# This is not R code 
+window &lt;- "This is a window"
+door &lt;- "This is a door" 
+one_hundred &lt;- 100
+two_thousand &lt;- 2000
+```
+
+```r
+# This is not R code
+open(window)
+open(door)
+open(book)
+
+clean(toilet)
+clean(data)
+clean(conscience)
+```
+]
+--
+&lt;br&gt;
+.center[
+.nunito[Programming in R is defining objects and applying functions to those objects ad infinitum]
+]
+
+
+```r
+# This is R code 
+grades &lt;- c(15, 10, 12, 13, 18)
+mean(grades) 
+```
+
+```
+## [1] 13.6
+```
+---
+&lt;br&gt;
+
+.greenhead[**IMPORTING AND INSPECTING DATA**]
+
+📥 **Download the data folder from the course website** 
+- We are going to analyze the 250 top rated French Movies in IMDB
+- Open the CSV file in your computer and inspect it: columns are variables and rows are observations
+
+---
+&lt;br&gt;
+
+.greenhead[**IMPORTING AND INSPECTING DATA**]
+
+📥 **Download the data folder from the course website** 
+- We are going to analyze the 250 top rated French Movies in IMDB
+- Open the CSV file in your computer and inspect it: columns are variables and rows are observations
+
+.nunito[How do we get this data into R?]
+- We import it using *read* functions, which take a file path as an input and give the file content as an output. 
+
+🚨 Use forward slashes `"mycomputer/folder/file.csv"` instead of backward slashes `"mycomputer\folder\file.csv"`
+
+
+
+
+```r
+imdb &lt;- read.csv("C:/User/Documents/01_imdb-top250-french.csv")
+
+# Exploring the data 
+head(imdb, 4)   # Show first four rows
+tail(imdb, 3)   # Show last three rows
+View(imdb)      # Show data in a spreadsheet view
+```
+---
+
+&lt;br&gt; 
+&lt;br&gt;
+.greenhead[**DID WE DO IT RIGHT?**]
+
+&lt;br&gt;
+
+&lt;img src="inputs/01_imdb-view.png" width="2400" /&gt;
+
+
+---
+&lt;br&gt; 
+&lt;br&gt;
+.greenhead[**DID WE DO IT RIGHT?**]
+
+&lt;br&gt;
+
+&lt;img src="inputs/01_imdb-view-zoom.png" width="2400" /&gt;
+
+---
+&lt;br&gt;
+&lt;br&gt;
+### USING FUNCTIONS
+- Read the documentation! `?read.csv()`
+  - Description
+  - Usage 
+  - Arguments: with and without default values (you need to write these to work)
+  - ⭐️ Examples 
+
+--
+
+```r
+read.csv(file, header = TRUE, sep = ",", quote = "\"",
+         dec = ".", fill = TRUE, comment.char = "", ...)
+```
+- You don’t need to write argument names if you write the arguments in the correct order 
+
+---
+&lt;br&gt;
+&lt;br&gt;
+### SO, WHAT HAPPENED?
+.nunito[A common problem when importing data is that the *character encoding* is handled incorrectly. ]
+
+This is when we see weird characters like `Ã©` where letters should be. 
+
+--
+
+All the characters we see, like `1` ,`#` or `M`, are produced by a sequence of bits (1-0), the encoding determines how these bits are translated into characters. 
+
+--
+
+We need to make sure we are using the right *translation*! 
+
+
+```r
+imdb &lt;- read.csv("C:/User/Documents/01_imdb-top250-french.csv",
+*                encoding = "UTF-8") #UTF-8 should work for latin languages
+```
+
+---
+### WHEN THINGS DON'T GO WELL... DEBUGGING🐞
+**Go line by line making sure each command does what you expect it to. **
+
+Most of the time the problem is one of these:
+
+--
+- **R isn't ready:** The `&gt;` should appear in the console. There is a `+` instead. You wrote something *incomplete* before and R is waiting for you to finish. Press `ESC`.  &lt;br&gt; ` c(1, 3, `
+
+--
+- **Mispelled object or function** Letter reversals or capitalization are often the issue.&lt;br&gt; `maen(1, 2, 3)`, `Mean(1, 2, 3)`
+
+--
+- **Punctuation problems** Mixing commas `,` and periods `.` or incorrect use of `" "`. &lt;br&gt;
+  `c(1,2.3)`
+
+--
+- **Wrong argument** 
+
+--
+- **Missing arguments** 
+--
+
+.center[.nunito[**🌈 READ CAREFULLY 🌈**]]
+
+---
+class: inverse
+## EXERCISE
+I want to:
+- Create a vector with 20 numbers drawn from a normal distribution with a mean of 5 and standard deviation of 2. 
+- Obtain its median. 
+
+.nunito[Fix the following code. 
+
+🔍 Start with `?rnorm()`]
+
+.pull-left[
+
+```r
+v1 &lt;- rnorm(2, 20)
+
+
+Median(v1)
+```
+
+]
+
+<div class="countdown" id="timer_25efcaba" data-update-every="1" tabindex="0" style="right:0;bottom:0;">
+<div class="countdown-controls"><button class="countdown-bump-down">&minus;</button><button class="countdown-bump-up">&plus;</button></div>
+<code class="countdown-time"><span class="countdown-digits minutes">02</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
+</div>
+
+---
+# AGENDA
+.nunitosm[
+
+.pull-left[
+.nunitosmgrey[
+- GETTING STARTED WITH R
+  - THE R STUDIO IDE
+  - OBJECTS AND FUNCTIONS
+  - IMPORTING DATA
+]
+- ANATOMY OF A DATA FRAME
+  - SCALARS
+  - VECTORS
+  - DATAFRAMES
+  - SUBSETTING
+]
+
+.pull-right[
+- MANIPULATING DATA WITH {dplyr}
+  - PACKAGES
+  - MAIN FUNCTIONS
+  - `group_by()` vs. `summarise()`
+
+- THE DATA ANALYSIS PIPELINE
+  - A CHECKLIST FOR CLEANING DATA
+  - LOOKING FOR HELP
+]
+ ]
+---
+
+
+class: split-three
+
+
+## ANATOMY OF A DATA FRAME
+
+What makes up a dataset? The smallest unit of data:
+
+.nunito[SCALARS]
+
+---
+class: split-three
+
+
+## ANATOMY OF A DATA FRAME
+
+What makes up a dataset? The smallest unit of data:
+
+.nunito[SCALARS]
+
+.column[
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+.center[
+*Numeric*]
+
+```r
+a &lt;- 100
+b &lt;- 3 / 100
+c &lt;- (a + b) / b 
+```
+Try: `class(a)`
+
+- *int:* round numbers &lt;br&gt; *dbl:* 2 decimals
+]
+
+
+
+.column[
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+.center[
+*Character*]
+
+```r
+d &lt;- "window"
+e &lt;- "4"
+f &lt;- "This is a room" 
+```
+Try: `class(d)`
+
+- Also called *strings* 
+]
+
+
+.column[
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+.center[
+*Boolean*]
+
+```r
+g &lt;- TRUE
+h &lt;- (3 &gt;= 4) 
+i &lt;- (c == (a+b) / b)
+```
+Try: `class(g)`
+
+- Produced with operators &lt;br&gt; `== &gt; &lt; &gt;= &lt;= &amp; | !` 
+]
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt; 
+---
+class: split-three
+
+
+## ANATOMY OF A DATA FRAME
+
+What makes up a dataset? The smallest unit of data:
+
+.nunito[SCALARS]
+
+.column[
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+.center[
+*Numeric*]
+
+```r
+a &lt;- 100
+b &lt;- 3 / 100
+c &lt;- (a + b) / b 
+```
+Try: `class(a)`
+
+- *int:* round numbers &lt;br&gt; *dbl:* 2 decimals
+]
+
+
+
+.column[
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+.center[
+*Character*]
+
+```r
+d &lt;- "window"
+e &lt;- "4"
+f &lt;- "This is a room" 
+```
+Try: `class(d)`
+
+- Also called *strings* 
+]
+
+
+.column[
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+.center[
+*Boolean*]
+
+```r
+g &lt;- TRUE
+h &lt;- (3 &gt;= 4) 
+i &lt;- (c == (a+b) / b)
+```
+Try: `class(g)`
+
+- Produced with operators &lt;br&gt; `== &gt; &lt; &gt;= &lt;= &amp; | !` 
+]
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt; 
+.center[
+.greenemph[What happens if we execute this?]
+
+]
+
+```r
+a + b
+a + e           
+a + as.numeric(e) 
+as.numeric(d)    
+as.character(a)   
+```
+---
+class: split-three
+
+
+## ANATOMY OF A DATA FRAME
+
+What makes up a dataset? The smallest unit of data:
+
+.nunito[SCALARS]
+
+.column[
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+.center[
+*Numeric*]
+
+```r
+a &lt;- 100
+b &lt;- 3 / 100
+c &lt;- (a + b) / b 
+```
+Try: `class(a)`
+
+- *int:* round numbers &lt;br&gt; *dbl:* 2 decimals
+]
+
+
+
+.column[
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+.center[
+*Character*]
+
+```r
+d &lt;- "window"
+e &lt;- "4"
+f &lt;- "This is a room" 
+```
+Try: `class(d)`
+
+- Also called *strings* 
+]
+
+
+.column[
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+.center[
+*Boolean*]
+
+```r
+g &lt;- TRUE
+h &lt;- (3 &gt;= 4) 
+i &lt;- (c == (a+b) / b)
+```
+Try: `class(g)`
+
+- Produced with operators &lt;br&gt; `== &gt; &lt; &gt;= &lt;= &amp; | !` 
+]
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt; 
+.center[
+.greenemph[What happens if we execute this?]
+
+]
+
+```r
+a + b
+a + e             # Error in a + e : non-numeric argument to binary operator
+a + as.numeric(e) 
+as.numeric(d)     # Character is coerced to NA (not available)
+as.character(a)   
+```
+
+---
+.center[
+### DATA STRUCTURE
+&lt;img src="inputs/01_data_structure.png" width="1365" /&gt;
+]
+---
+### VECTORS  
+Unidimensional object that stores a sequence of values of the **same type**
+
+```r
+c("Hello world", 35, FALSE)     
+```
+
+```
+## [1] "Hello world" "35"          "FALSE"
+```
+--
+
+```r
+c("Hello world", as.character(35), as.character(FALSE))  # Equivalent to this
+```
+
+```
+## [1] "Hello world" "35"          "FALSE"
+```
+--
+
+.nunito[Having the same type of values allows operations to apply to all elements in the vector]  
+
+--
+
+.pull-left[
+
+```r
+v1 &lt;- c(1, 2, 3)
+v1
+v1 / 3 
+v1 * v1      # Multiply element wise
+v1 %*% v1    # Matrix multiplication
+```
+]
+
+
+.pull-right[ 
+]
+---
+### VECTORS 
+Unidimensional object that stores a sequence of values of the **same type**
+
+```r
+c("Hello world", 35, FALSE)     
+```
+
+```
+## [1] "Hello world" "35"          "FALSE"
+```
+
+
+```r
+c("Hello world", as.character(35), as.character(FALSE))  # Equivalent to this
+```
+
+```
+## [1] "Hello world" "35"          "FALSE"
+```
+
+.nunito[Having the same type of values allows operations to apply to all elements in the vector]  
+
+
+.pull-left[
+
+```r
+v1 &lt;- c(1, 2, 3)
+v1
+```
+
+```
+## [1] 1 2 3
+```
+
+```r
+v1 / 3 
+```
+
+```
+## [1] 0.3333333 0.6666667 1.0000000
+```
+
+```r
+v1 * v1      # Multiply element wise
+```
+
+```
+## [1] 1 4 9
+```
+
+```r
+v1 %*% v1    # Matrix multiplication
+```
+
+```
+##      [,1]
+## [1,]   14
+```
+]
+
+
+.pull-right[ 
+
+]
+---
+### VECTORS 
+Unidimensional object that stores a sequence of values of the **same type**
+
+```r
+c("Hello world", 35, FALSE)     
+```
+
+```
+## [1] "Hello world" "35"          "FALSE"
+```
+
+
+```r
+c("Hello world", as.character(35), as.character(FALSE))  # Equivalent to this
+```
+
+```
+## [1] "Hello world" "35"          "FALSE"
+```
+
+.nunito[Having the same type of values allows operations to apply to all elements in the vector]  
+
+
+.pull-left[
+
+```r
+v1 &lt;- c(1, 2, 3)
+v1
+```
+
+```
+## [1] 1 2 3
+```
+
+```r
+v1 / 3 
+```
+
+```
+## [1] 0.3333333 0.6666667 1.0000000
+```
+
+```r
+v1 * v1      # Multiply element wise
+```
+
+```
+## [1] 1 4 9
+```
+
+```r
+v1 %*% v1    # Matrix multiplication
+```
+
+```
+##      [,1]
+## [1,]   14
+```
+]
+
+
+.pull-right[ 
+
+```r
+# Creating vectors
+v1 &lt;- c(1, 1, 3, 5)    # Specify all 
+v1
+v2 &lt;- c(1:5)           # Evenly spaced 
+v2
+v3 &lt;- c(v1, v2)        # Combining  
+v3
+```
+]
+---
+### VECTORS 
+Unidimensional object that stores a sequence of values of the **same type**
+
+```r
+c("Hello world", 35, FALSE)     
+```
+
+```
+## [1] "Hello world" "35"          "FALSE"
+```
+
+
+```r
+c("Hello world", as.character(35), as.character(FALSE))  # Equivalent to this
+```
+
+```
+## [1] "Hello world" "35"          "FALSE"
+```
+
+.nunito[Having the same type of values allows operations to apply to all elements in the vector]  
+
+
+.pull-left[
+
+```r
+v1 &lt;- c(1, 2, 3)
+v1
+```
+
+```
+## [1] 1 2 3
+```
+
+```r
+v1 / 3 
+```
+
+```
+## [1] 0.3333333 0.6666667 1.0000000
+```
+
+```r
+v1 * v1      # Multiply element wise
+```
+
+```
+## [1] 1 4 9
+```
+
+```r
+v1 %*% v1    # Matrix multiplication
+```
+
+```
+##      [,1]
+## [1,]   14
+```
+]
+
+
+.pull-right[ 
+
+```r
+# Creating vectors
+v1 &lt;- c(1, 1, 3, 5)    # Specify all 
+v1
+```
+
+```
+## [1] 1 1 3 5
+```
+
+```r
+v2 &lt;- c(1:5)           # Evenly spaced 
+v2
+```
+
+```
+## [1] 1 2 3 4 5
+```
+
+```r
+v3 &lt;- c(v1, v2)        # Combining  
+v3
+```
+
+```
+## [1] 1 1 3 5 1 2 3 4 5
+```
+]
+---
+.center[
+### DATA STRUCTURE
+&lt;img src="inputs/01_data_structure.png" width="1365" /&gt;
+]
+---
+
+### DATA FRAMES AND SUBSETTING
+&lt;br&gt;
+
+--
+Let's explore the dataset with function `str()`
+
+```r
+str(imdb)
+```
+
+```
+## 'data.frame':	250 obs. of  13 variables:
+##  $ X             : int  1 2 3 4 5 6 7 8 9 10 ...
+##  $ Name          : chr  "Shoah" "Home" "Untouchable" "Le Trou" ...
+##  $ Rank          : int  1 2 3 4 5 6 7 8 9 10 ...
+##  $ Year          : chr  "-1985" "(I) (2009)" "-2011" "-1960" ...
+....
+```
+
+--
+
+**A dataframe is a collection of vectors.** &lt;br&gt; We use `$` to select a variable of the dataset:
+
+```r
+imdb$Name
+```
+
+```
+##   [1] "Shoah"                                               
+##   [2] "Home"                                                
+##   [3] "Untouchable"                                         
+....
+```
+--
+We can also use `$` to create and replace variables
+
+```r
+imdb$new_var &lt;- c(250:1) # The vector has to be of the same length as the dataframe
+```
+
+---
+### DATA FRAMES AND SUBSETTING
+We can also use the **subsetting** operator `[]` to select a portion of our data. Like this: `data[row, column]` or `vector[element]`. 
+
+--
+
+.pull-left[
+We indicate what we want to select using:
+
+- Indices (position) 
+  - *The second column*
+- Logical operators 
+  - *Movies ranked above 10*
+- Names: 
+  - *Columns "Rank" and "Duration"*
+]
+
+.pull-right[
+**First row and cols "Name" and "Year": **
+
+```r
+imdb[1, c("Name", "Year")]
+imdb[1, c(2, 4)]
+```
+
+]
+---
+
+### DATA FRAMES AND SUBSETTING
+We can also use the **subsetting** operator `[]` to select a portion of our data. Like this: `data[row, column]` or `vector[element]`. 
+
+.pull-left[
+We indicate what we want to select using:
+
+- Indices (position) 
+  - *The second column*
+- Logical operators 
+  - *Movies ranked above 10*
+- Names: 
+  - *Columns "Rank" and "Duration"*
+]
+
+.pull-right[
+**First row and cols "Name" and "Year": **
+
+```r
+imdb[1, c("Name", "Year")]
+imdb[1, c(2, 4)]
+```
+**First 10 rows, all columns:**
+
+```r
+imdb[1:10,] 
+imdb[-(11:250),]
+```
+
+]
+---
+
+
+### DATA FRAMES AND SUBSETTING
+We can also use the **subsetting** operator `[]` to select a portion of our data. Like this: `data[row, column]` or `vector[element]`. 
+
+.pull-left[
+We indicate what we want to select using:
+
+- Indices (position) 
+  - *The second column*
+- Logical operators 
+  - *Movies ranked above 10*
+- Names: 
+  - *Columns "Rank" and "Duration"*
+]
+
+.pull-right[
+**First row and cols "Name" and "Year": **
+
+```r
+imdb[1, c("Name", "Year")]
+imdb[1, c(2, 4)]
+```
+**First 10 rows, all columns:**
+
+```r
+imdb[1:10,] 
+imdb[-(11:250),]
+```
+
+**Name of the movies ranked 11-14 :**
+
+```r
+imdb[Rank &lt; 15 &amp; Rank &gt; 10, "Name" ] 
+  # This doesn't work. Why?
+imdb[imdb$Rank &lt; 15 &amp; 
+       imdb$Rank &gt; 10, "Name"]
+```
+]
+---
+class: inverse
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+### EXERCISE
+- Create the  vector `c(7, 7, 8, 8, 7, 7, 8, 8)` using the function `rep()`
+
+- Modify the code `seq(1, 6)` to get the vector c(0, 2, 4, 6)
+
+- Get the name of the shortest movie in the data set &lt;br&gt;
+ 🔍 Use functions `min()`, `substr()`
+
+- There are 6 movies that last 104 minutes, what are they called?
+
+--
+<div class="countdown" id="timer_af7fe841" data-update-every="1" tabindex="0" style="right:0;bottom:0;">
+<div class="countdown-controls"><button class="countdown-bump-down">&minus;</button><button class="countdown-bump-up">&plus;</button></div>
+<code class="countdown-time"><span class="countdown-digits minutes">10</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
+</div>
+
+
+---
+# AGENDA
+.nunitosm[
+
+.pull-left[
+.nunitosmgrey[
+- GETTING STARTED WITH R
+  - THE R STUDIO IDE
+  - OBJECTS AND FUNCTIONS
+  - IMPORTING DATA
+
+- ANATOMY OF A DATA FRAME
+  - SCALARS
+  - VECTORS
+  - DATAFRAMES
+  - SUBSETTING
+]]
+
+.pull-right[
+- MANIPULATING DATA WITH {dplyr}
+  - PACKAGES
+  - MAIN FUNCTIONS
+  - `group_by()` vs. `summarise()`
+
+- THE DATA ANALYSIS PIPELINE
+  - A CHECKLIST FOR CLEANING DATA
+  - LOOKING FOR HELP
+]
+ ]
+
+---
+### MANIPULATING DATA WITH {dplyr}
+
+.nunito[There are tooons of user-created functions, which come in ***packages***]
+
+- So far we’ve only used functions that are already built in R, also known as ****{base}****
+    - Packages are centralized on the Comprehensive R Archive Newtork (CRAN)
+
+--
+  
+  
+- An R package is like a lightbulb 💡. &lt;br&gt; First you need to install it `install.packages("package_name")`, &lt;br&gt;and then turn it on when you need it `library("package_name")` 
+--
+  
+  - You can avoid loading the packages by specifying the package `package_name::function` &lt;br&gt; **Advantage**: clear for others which package is it coming from, avoids conflicts when packages have functions with the same name. &lt;br&gt; **Disadvantage:** Not practical for functions you use often.
+  
+--
+
+- The 🌈[tidyverse](tidyverse.org) is an umbrella package that installs several pakages that are useful for data analysis and work well together: {tidyr}, {dplyr}, {ggplot2}, {tibble}, etc. 
+
+    - **{dplyr}**:  data manipulation
+    - **{tidyr}**: converting between different shapes 
+    - **{ggplot2}**: creating plots 
+    
+---
+
+## MAIN FUNCTIONS IN `dplyr`
+**Grammar** of data manipulation with very user-friendly functions for the most common tasks:
+.pull-left[
+&lt;table&gt;
+&lt;tr&gt;
+&lt;td&gt; Function &lt;/td&gt; &lt;td&gt; Description &lt;/td&gt;  
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt; 
+
+&lt;pre&gt;
+  mutate()
+&lt;/pre&gt;
+
+&lt;/td&gt;
+&lt;td&gt;
+
+  Add / modify variables 
+
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt; 
+
+&lt;pre&gt;
+  select()
+&lt;/pre&gt;
+
+&lt;/td&gt;
+&lt;td&gt;
+
+Keep / drop variables (columns)
+
+&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt; 
+
+&lt;pre&gt;
+  filter()
+&lt;/pre&gt;
+
+&lt;/td&gt;
+&lt;td&gt;
+
+Keep / drop observations (rows) 
+
+&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt; 
+
+&lt;pre&gt;
+  arrange()
+&lt;/pre&gt;
+
+&lt;/td&gt;
+&lt;td&gt;
+
+Sort rows according to values of variables
+
+&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt; 
+
+&lt;pre&gt;
+  summarise()
+&lt;/pre&gt;
+
+&lt;/td&gt;
+&lt;td&gt;
+
+Aggregate data into descriptive statistics 
+
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;]
+
+.pull-right[
+]
+
+---
+
+## MAIN FUNCTIONS IN `dplyr`
+**Grammar** of data manipulation with very user-friendly functions for the most common tasks:
+.pull-left[
+&lt;table&gt;
+&lt;tr&gt;
+&lt;td&gt; Function &lt;/td&gt; &lt;td&gt; Description &lt;/td&gt;  
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt; 
+
+&lt;pre&gt;
+  mutate()
+&lt;/pre&gt;
+
+&lt;/td&gt;
+&lt;td&gt;
+
+  Add / modify variables 
+
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt; 
+
+&lt;pre&gt;
+  select()
+&lt;/pre&gt;
+
+&lt;/td&gt;
+&lt;td&gt;
+
+Keep / drop variables (columns)
+
+&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt; 
+
+&lt;pre&gt;
+  filter()
+&lt;/pre&gt;
+
+&lt;/td&gt;
+&lt;td&gt;
+
+Keep / drop observations (rows) 
+
+&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt; 
+
+&lt;pre&gt;
+  arrange()
+&lt;/pre&gt;
+
+&lt;/td&gt;
+&lt;td&gt;
+
+Sort rows according to values of variables
+
+&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt; 
+
+&lt;pre&gt;
+  summarise()
+&lt;/pre&gt;
+
+&lt;/td&gt;
+&lt;td&gt;
+
+Aggregate data into descriptive statistics 
+
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;]
+
+.pull-right[The **pipe operator** ` %&gt;% ` or `|&gt;` (Ctrl + Shift + M)
+- Allows to chain functions you apply to an object
+- Take X and do this, and this, and this, and ...
+&lt;video autosize: true controls&gt;
+  &lt;source src="./01_pipe_baking.mp4" type="video/mp4"&gt;
+&lt;/video&gt;
+]
+
+---
+## MAIN FUNCTIONS IN `dplyr`
+
+
+```r
+install.packages("dplyr")      # Requires an internet connection
+```
+
+```r
+library(dplyr)
+```
+&lt;br&gt;
+
+```r
+imdb
+```
+
+```
+##       X                                                 Name Rank       Year
+## 1     1                                                Shoah    1      -1985
+## 2     2                                                 Home    2 (I) (2009)
+## 3     3                                          Untouchable    3      -2011
+## 4     4                                              Le Trou    4      -1960
+## 5     5                            The Man Who Planted Trees    5      -1987
+## 6     6                                 Children of Paradise    6      -1945
+## 7     7                                               Amélie    7      -2001
+## 8     8                                            Incendies    8      -2010
+## 9     9                                             La Jetée    9      -1962
+....
+```
+
+
+---
+## MAIN FUNCTIONS IN `dplyr`
+
+
+```r
+install.packages("dplyr")      # Requires an internet connection
+```
+
+```r
+library(dplyr)
+```
+
+
+```r
+imdb %&gt;% 
+  select(Name, Rank, Duration)                    # Keep selected vars
+```
+
+```
+##                                                     Name Rank Duration
+## 1                                                  Shoah    1  566 min
+## 2                                                   Home    2  118 min
+## 3                                            Untouchable    3  112 min
+## 4                                                Le Trou    4  131 min
+## 5                              The Man Who Planted Trees    5   30 min
+## 6                                   Children of Paradise    6  189 min
+## 7                                                 Amélie    7  122 min
+## 8                                              Incendies    8  131 min
+## 9                                               La Jetée    9   28 min
+....
+```
+---
+## MAIN FUNCTIONS IN `dplyr`
+
+
+```r
+install.packages("dplyr")      # Requires an internet connection
+```
+
+```r
+library(dplyr)
+```
+
+
+```r
+imdb %&gt;% 
+  select(Name, Rank, Duration) %&gt;%                 # Keep selected vars
+  mutate(top50 = (Rank &lt;= 50))                     # Create a new variable
+```
+
+```
+##                                                     Name Rank Duration top50
+## 1                                                  Shoah    1  566 min  TRUE
+## 2                                                   Home    2  118 min  TRUE
+## 3                                            Untouchable    3  112 min  TRUE
+## 4                                                Le Trou    4  131 min  TRUE
+## 5                              The Man Who Planted Trees    5   30 min  TRUE
+## 6                                   Children of Paradise    6  189 min  TRUE
+## 7                                                 Amélie    7  122 min  TRUE
+## 8                                              Incendies    8  131 min  TRUE
+## 9                                               La Jetée    9   28 min  TRUE
+....
+```
+---
+
+## MAIN FUNCTIONS IN `dplyr`
+
+
+```r
+install.packages("dplyr")      # Requires an internet connection
+```
+
+```r
+library(dplyr)
+```
+
+
+```r
+imdb %&gt;% 
+  select(Name, Rank, Duration) %&gt;%                 # Keep selected vars
+  mutate(top50 = (Rank &lt;= 50)) %&gt;%                 # Create a new variable
+  mutate(Duration =
+           as.numeric(substr(Duration, 1, 3)))     # Modify existing var
+```
+
+```
+##                                                     Name Rank Duration top50
+## 1                                                  Shoah    1      566  TRUE
+## 2                                                   Home    2      118  TRUE
+## 3                                            Untouchable    3      112  TRUE
+## 4                                                Le Trou    4      131  TRUE
+## 5                              The Man Who Planted Trees    5       30  TRUE
+## 6                                   Children of Paradise    6      189  TRUE
+## 7                                                 Amélie    7      122  TRUE
+## 8                                              Incendies    8      131  TRUE
+## 9                                               La Jetée    9       28  TRUE
+....
+```
+---
+
+## MAIN FUNCTIONS IN `dplyr`
+
+
+```r
+install.packages("dplyr")      # Requires an internet connection
+```
+
+```r
+library(dplyr)
+```
+
+
+```r
+imdb %&gt;% 
+  select(Name, Rank, Duration) %&gt;%                 # Keep selected vars
+  mutate(top50 = (Rank &lt;= 50)) %&gt;%                 # Create a new variable
+  mutate(Duration =
+           as.numeric(substr(Duration, 1, 3))) %&gt;% # Modify existing var
+  filter(Name != "Amélie")                         # Keep/drop certain rows
+```
+
+```
+##                                                     Name Rank Duration top50
+## 1                                                  Shoah    1      566  TRUE
+## 2                                                   Home    2      118  TRUE
+## 3                                            Untouchable    3      112  TRUE
+## 4                                                Le Trou    4      131  TRUE
+## 5                              The Man Who Planted Trees    5       30  TRUE
+## 6                                   Children of Paradise    6      189  TRUE
+## 7                                              Incendies    8      131  TRUE
+## 8                                               La Jetée    9       28  TRUE
+## 9                                          A Man Escaped   10      101  TRUE
+....
+```
+---
+## MAIN FUNCTIONS IN `dplyr`
+
+
+```r
+install.packages("dplyr")      # Requires an internet connection
+```
+
+```r
+library(dplyr)
+```
+
+
+```r
+imdb %&gt;% 
+  select(Name, Rank, Duration) %&gt;%                 # Keep selected vars
+  mutate(top50 = (Rank &lt;= 50)) %&gt;%                 # Create a new variable
+  mutate(Duration =
+           as.numeric(substr(Duration, 1, 3))) %&gt;% # Modify existing var
+  filter(Name != "Amélie") %&gt;%                     # Keep/drop certain rows
+  arrange(-Rank)                                   # Sort rows
+```
+
+```
+##                                                     Name Rank Duration top50
+## 1                                       Monsieur Ibrahim  250       96 FALSE
+## 2                                                Polisse  249      127 FALSE
+## 3                                           Read My Lips  248      118 FALSE
+## 4                                      What's in a Name?  247      109 FALSE
+## 5                                              99 francs  246      100 FALSE
+## 6                         The Beat That My Heart Skipped  245      108 FALSE
+## 7                                         Certified Copy  244      106 FALSE
+## 8                                      La Famille Bélier  243      106 FALSE
+## 9                                               Pot Luck  242      122 FALSE
+....
+```
+---
+## MAIN FUNCTIONS IN `dplyr`
+
+
+```r
+install.packages("dplyr")      # Requires an internet connection
+```
+
+```r
+library(dplyr)
+```
+
+
+```r
+imdb %&gt;% 
+  select(Name, Rank, Duration) %&gt;%                 # Keep selected vars
+  mutate(top50 = (Rank &lt;= 50)) %&gt;%                 # Create a new variable
+  mutate(Duration =
+           as.numeric(substr(Duration, 1, 3))) %&gt;% # Modify existing var
+  filter(Name != "Amélie") %&gt;%                     # Keep/drop certain rows
+  arrange(-Rank) %&gt;%                               # Sort rows
+  summarise(avg_dur = mean(Duration),              # Aggregate into statistics 
+            min_dur = min(Duration),
+            max_dur = max(Duration))
+```
+
+```
+##    avg_dur min_dur max_dur
+## 1 109.1526      13     566
+```
+---
+## MAIN FUNCTIONS IN `dplyr`
+Two useful functions for `mutate()`  
+
+`ifelse()`
+
+```r
+imdb %&gt;% 
+  select(Name, Type) %&gt;% 
+  mutate(restricted = ifelse(Type %in% c("R", "X", "18"), 
+                             TRUE, 
+                             FALSE )) %&gt;% 
+  head()
+```
+
+```
+##                        Name Type restricted
+## 1                     Shoah   PG      FALSE
+## 2                      Home    U      FALSE
+## 3               Untouchable   15      FALSE
+## 4                   Le Trou    A      FALSE
+## 5 The Man Who Planted Trees           FALSE
+## 6      Children of Paradise    A      FALSE
+```
+
+
+
+---
+
+## MAIN FUNCTIONS IN `dplyr`
+Two useful functions for `mutate()`  
+
+`ifelse()`
+
+```r
+imdb %&gt;% 
+  select(Name, Type) %&gt;% 
+  mutate(restricted = ifelse(Type %in% c("R", "X", "18"), 
+                             TRUE, 
+                             FALSE )) %&gt;% 
+  head()
+```
+
+
+
+`case_when()`
+
+```r
+imdb &lt;- 
+imdb %&gt;% 
+  mutate(audience = case_when(Type %in% c("R", "X", "18") ~ "Over 17" , 
+                              Type %in% c("PG", "PG-13") ~ "Parental guidance",
+                              Type == "" ~ "No information",
+                              .default = "General audiences")) 
+```
+
+```
+##                        Name Type          audience
+## 1                     Shoah   PG Parental guidance
+## 2                      Home    U General audiences
+## 3               Untouchable   15 General audiences
+## 4                   Le Trou    A General audiences
+## 5 The Man Who Planted Trees         No information
+## 6      Children of Paradise    A General audiences
+```
+
+---
+### group_by() AND summarise()
+- `group_by()` allows you to do computations separately for different parts of the data 
+
+```r
+imdb %&gt;% 
+  mutate(mean_all = mean(Rating, na.rm = TRUE)) %&gt;% 
+* group_by(audience) %&gt;%
+  mutate(mean_aud = mean(Rating, na.rm = TRUE)) %&gt;% 
+  select(Name, audience, Rating, mean_all, mean_aud) %&gt;% 
+  head(5)
+```
+
+```
+## # A tibble: 5 × 5
+## # Groups:   audience [3]
+##   Name                      audience          Rating mean_all mean_aud
+##   &lt;chr&gt;                     &lt;chr&gt;              &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+## 1 Shoah                     Parental guidance    8.7     7.62     7.69
+## 2 Home                      General audiences    8.5     7.62     7.64
+## 3 Untouchable               General audiences    8.5     7.62     7.64
+## 4 Le Trou                   General audiences    8.5     7.62     7.64
+## 5 The Man Who Planted Trees No information       8.5     7.62     7.48
+```
+--
+
+- It will apply to all subsequent operations. You need to `ungroup()` to cancel its effect
+
+```r
+imdb %&gt;% 
+  group_by(audience) %&gt;%   
+  mutate(mean_aud = mean(Rating, na.rm = TRUE)) %&gt;% 
+* ungroup() %&gt;%
+  mutate(mean_all = mean(Rating, na.rm = TRUE)) 
+```
+
+---
+### group_by() AND summarise()
+`group_by()` is also useful with `summarise()`
+
+.pull-left[
+
+  - Keeps the grouping variable 
+  - Computes statistics for each group 
+
+
+```r
+  imdb %&gt;% 
+    group_by(audience) %&gt;% 
+    summarise(n = n(),  
+              avg_rating = mean(Rating)) 
+```
+
+```
+## # A tibble: 4 × 3
+##   audience              n avg_rating
+##   &lt;chr&gt;             &lt;int&gt;      &lt;dbl&gt;
+## 1 General audiences   158       7.64
+## 2 No information       22       7.48
+## 3 Over 17              42       7.59
+## 4 Parental guidance    28       7.69
+```
+
+  ]
+  
+.pull-right[
+- `summarise()` by itself computes statistics for the whole dataset
+&lt;br&gt; 
+&lt;br&gt;
+
+```r
+  imdb %&gt;% 
+    summarise(n = n(),  
+              avg_rating = mean(Rating)) 
+```
+
+```
+##     n avg_rating
+## 1 250     7.6212
+```
+
+]
+--
+
+&lt;br&gt; 
+.center[🚨 `mutate()` ≠ `summarise()`
+
+ `mutate()` transforms a vector onto another **vector**
+
+ `summarise()` transforms a vector onto a **value**
+]
+---
+class: inverse
+&lt;br&gt;
+&lt;br&gt;
+# EXERCISE
+
+- Create a table that shows the share of comedies and dramas in the sample. 🔍 Use functions `str_detect()` from package {stringr} and `mean()`  
+
+
+- Create a variable *category* that classifies movies into short or long depending on whether or not they exceed 40 min., and create a separate ranking by category. 🔍 Use function `rank()` and don't forget to fix the *Duration* variable if you haven't: `as.numeric(substr(Duration, 1, 3))`
+
+--
+
+**When overwhelmed, break down tasks into smaller steps!! Step away from the screen if you need to.**  
+<div class="countdown" id="timer_8d8b98a8" data-update-every="1" tabindex="0" style="right:0;bottom:0;">
+<div class="countdown-controls"><button class="countdown-bump-down">&minus;</button><button class="countdown-bump-up">&plus;</button></div>
+<code class="countdown-time"><span class="countdown-digits minutes">08</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
+</div>
+
+---
+# AGENDA
+.nunitosm[
+.nunitosmgrey[
+.pull-left[
+
+- GETTING STARTED WITH R
+  - THE R STUDIO IDE
+  - OBJECTS AND FUNCTIONS
+  - IMPORTING DATA
+
+- ANATOMY OF A DATA FRAME
+  - SCALARS
+  - VECTORS
+  - DATAFRAMES
+  - SUBSETTING
+]]
+
+.pull-right[
+.nunitosmgrey[
+
+- MANIPULATING DATA WITH {dplyr}
+  - PACKAGES
+  - MAIN FUNCTIONS
+  - `group_by()` vs. `summarise()`
+]
+- THE DATA ANALYSIS PIPELINE
+  - A CHECKLIST FOR CLEANING DATA
+  - LOOKING FOR HELP
+]
+ ]
+
+---
+class:middle
+
+.center[
+<div id="htmlwidget-821e7913f518c956e71b" style="width:600px;height:504px;" class="grViz html-widget "></div>
+<script type="application/json" data-for="htmlwidget-821e7913f518c956e71b">{"x":{"diagram":"digraph {\n  graph [layout = dot, rankdir = TB          ]\n  \n  node [shape = rectangle,\n        fontname = Nunito,\n        fontsize = 14]        \n  rec1 [label = \"🕵🏾 DATA COLLECTION\"]\n  rec2 [label = \"🧹 DATA CLEANING / TIDYING\",\n        color = \"#D84727\"]\n  rec3 [label = \"📊DATA ANALYSIS\"]\n  rec4 [label = \"📑REPORT RESULTS\"]\n  \n  # edge definitions with the node IDs\n  rec1 -> rec2 -> rec3 -> rec4\n  }","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+]
+---
+### A CHECKLIST FOR CLEANING DATA
+We've learned the tools for manipulating data. What does it mean to clean and tidy our data?
+
+- Variable management: *is the data stored in the right way?*
+
+- Data tidying: *is the structure of the data right?* 
+
+- Documentation: *is the data understandable to others?*
+
+- Data aggregation: *do we have all we need in the same place?* 
+
+
+---
+### A CHECKLIST FOR CLEANING DATA
+We've learned the tools for manipulating data. What does it mean to clean and tidy our data?
+
+- Variable management: *is the data stored in the right way?*
+  - Missing values `is_na()`, `NA_real_`, `NA_character_` &lt;br&gt; 🏴‍☠️ 0s are replacing missing values
+  - Storage types (are numbers numbers?)
+  - Formats are inconsistent 
+  - More here: [Quartz guide to bad data and how to solve them](https://github.com/Quartz/bad-data-guide#values-are-missing)
+- Data tidying: *is the structure of the data right?* 
+
+- Documentation: *is the data understandable to others?*
+ 
+- Data aggregation: *do we have all we need in the same place?* 
+
+---
+### A CHECKLIST FOR CLEANING DATA
+We've learned the tools for manipulating data. What does it mean to clean and tidy our data?
+
+- Variable management: *is the data stored in the right way?*
+
+- Data tidying: *is the structure of the data right?* 
+  Every column is a variable, every row is an observation every cell is a single value
+  - Remove duplicates 
+  - [See examples and tips here](https://cran.r-project.org/web/packages/tidyr/vignettes/tidy-data.html)
+- Documentation: *is the data understandable to others?*
+  
+- Data aggregation: *do we have all we need in the same place?* 
+
+---
+### A CHECKLIST FOR CLEANING DATA
+We've learned the tools for manipulating data. What does it mean to clean and tidy our data?
+
+- Variable management: *is the data stored in the right way?*
+
+- Data tidying: *is the structure of the data right?* 
+
+- Documentation: *is the data understandable to others?*
+  - Variable names 
+  - [Variable labels](https://www.pipinghotdata.com/posts/2022-09-13-the-case-for-variable-labels-in-r/)
+  - Metadata: describing the collection, characteristics and processing of the data.  
+- Data aggregation: *do we have all we need in the same place?* 
+
+---
+
+---
+### A CHECKLIST FOR CLEANING DATA
+We've learned the tools for manipulating data. What does it mean to clean and tidy our data?
+
+- Variable management: *is the data stored in the right way?*
+
+- Data tidying: *is the structure of the data right?* 
+
+- Documentation: *is the data understandable to others?*
+
+- Data aggregation: *do we have all we need in the same place?* 
+  - Merging datasets (adding columns) `left_join()`, `right_join()`
+  - Appending datasets (adding rows) `rbind()`
+
+
+---
+### A CHECKLIST FOR CLEANING DATA
+We've learned the tools for manipulating data. What does it mean to clean and tidy our data?
+
+- Variable management: *is the data stored in the right way?*
+
+- Data tidying: *is the structure of the data right?* 
+
+- Documentation: *is the data understandable to others?*
+
+- Data aggregation: *do we have all we need in the same place?* 
+
+
+
+.nunito[⭐️TWO RULES:]
+1. **Never save over raw data.** Keep the original data in a separate folder.
+2. **Document everything.** `#` is your best friend. 
+
+
+---
+### A CHECKLIST FOR CLEANING DATA
+
+- Variable management: *is the data stored in the right way?*
+  - Missing values `is_na()`, `NA_real_`, `NA_character_` &lt;br&gt; 🏴‍☠️ 0s are replacing missing values
+  - Storage types (are numbers numbers?)
+  - Formats are inconsistent 
+  - More here: [Quartz guide to bad data and how to solve them](https://github.com/Quartz/bad-data-guide#values-are-missing)
+- Data tidying: *is the structure of the data right?* 
+  Every column is a variable, every row is an observation every cell is a single value
+  - Remove duplicates 
+  - [See examples and tips here](https://cran.r-project.org/web/packages/tidyr/vignettes/tidy-data.html)
+- Documentation: *is the data understandable to others?*
+  - Variable names 
+  - [Variable labels](https://www.pipinghotdata.com/posts/2022-09-13-the-case-for-variable-labels-in-r/)
+  - Metadata: describing the collection, characteristics and processing of the data.  
+- Data aggregation: *do we have all we need in the same place?* 
+  - Merging datasets (adding columns) `left_join()`, `right_join()`
+  - Appending datasets (adding rows) `rbind()`
+
+.nunito[⭐️TWO RULES:]
+1. **Never save over raw data.** Keep the original data in a separate folder.
+2. **Document everything.** `#` is your best friend. 
+
+---
+&lt;br&gt;
+### A WORD ON LEARNING R AND LOOKING FOR HELP
+- We talked before about debugging and the importance of reading documentation.
+--
+
+- **Don’t pipe blindfolded !** Check that each command does what it’s expected to do. &lt;br&gt; *How is this command treating missing values?* (More on *defensive programming* on Friday)
+
+--
+- If things are not working out, check that you specified all the arguments you need and that they are appropriate. `?function()` is free!!
+
+--
+- Search online. Your questions have fore sure been asked before on ***stackoverflow.***
+    - Learning how to Google is a skill in itself. Think about your issue in the most abstract way.
+    - If you can’t understand an error message, paste the error message on Google along with the name of your command.
+    - ⭐️ Ask in the course website. I’ll do my best to support you throughout this year.
+- 💎 **Check for typos.** 70% of the time this is the issue. 
+---
+### HOMEWORK 
+🔔 .nunito[**Due on Wednesday before 9am **]. &lt;br&gt; Submit using this [link](https://classroom.github.com/a/kGB7qVRf) and following the instructions [here](). 
+
+✅️ Inspect the IMDB dataset [🔍`glimpse()` `table()`] and describe 5 issues we should solve in the data cleaning/tidying process that we haven’t addressed in this lecture. Write down the name of at least one function that would help for this. Google if you need! 
+
+- The year variable is not numeric and has string characters. 🔍`str_length()`, `str_sub()`, `as.numeric()`
+
+✅️ Are older movies better?
+
+1) Fix the year variable. This can be done in multiple ways! Try with 🔍`str_length()` and `str_sub()`
+
+2) Create a variable that indicates whether a movie is older or more recent than the average year in the sample.
+
+3) Create a table with the average rating by decade (start from the 50s).
+ 
+  .nunito[You can **work** together, but don't copy-paste code]
+  
+  .nunito[🖍️ Don't forget to comment your code, describe what you are doing️]
+
+
+---
+### RESOURCES
+**Learning R (Manipulating data)** 
+- [YaRrr The Pirate's Guide to R](https://bookdown.org/ndphillips/YaRrr/why-is-r-so-great.html)
+- Previous editions of this course: [Louis Sirugue](https://louissirugue.github.io/intro_to_R/home.html); [Hannah Bull / Lea Dousset](https://introtor-pse.appspot.com/)  
+- [Introduction to dplyr](https://cran.r-project.org/web/packages/dplyr/vignettes/dplyr.html)
+
+**Data analysis pipeline (Cleaning and tidying)**
+- [Development Research in Practice: *The DIME Analytics Data Handbook*](https://worldbank.github.io/dime-data-handbook/index.html)
+- [DIME Data Cleaning Checklist](https://dimewiki.worldbank.org/Checklist:_Data_Cleaning)
+- [Innovations for Poverty Action Data Cleaning Guide](https://povertyaction.github.io/guides/cleaning/readme/)
+  
+  
+  
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightLines": true
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
