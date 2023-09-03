@@ -11,7 +11,15 @@ The objective of this course is to provide you with the necessary bases in R pro
 ## Class policies:
 - Respect your classmates and teacher. 
 - There is no grade on this class, **BUT** I highly encourage you to take it seriously. If you pay your full attention in class and do the homework you will have a great foundation of programming skills. This will pay off when you do your Econometrics homework and (later on) if you work on applied research for your master's thesis or work as a research assistant.
-- Homework should be turned in by 9 am. 🍬 Here is an incentive: if you hand in all your homework on time, independent of your performance on the assigned tasks, I will be available to answer any R questions throughout the academic year. You'll just need to add an issue here or send me an e-mail.   
+- Homework should be turned in by 9 am. 🍬 Here is an incentive: if you hand in all your homework on time, independent of your performance on the assigned tasks, I will be available to answer any R questions throughout the academic year. You'll just need to add an issue here or send me an e-mail.
+
+## Lectures:
+1. Data manipulation (Sep 4)
+2. Data visualization (Sep 6)
+    - Homework 1 due
+3. R Markdown, LaTeX and other tools for reproducible research (Sep 8)
+    - Homework 2 due 
+4. Econometrics in R (Sep 22) 
 
 ## Do you have a question, you can't access the material or your code doesn't run?
 Create a new issue and write down your question **publicly**: 
