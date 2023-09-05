@@ -19,7 +19,7 @@ The objective of this course is to provide you with the necessary bases in R pro
 3. Data visualization (Sep 6)
     - Homework 1 due [last slide of lecture 1](https://github.com/mariamontoyaa/2023-intro-to-R-public/blob/d22d568bf491066d70795a6b56f135c56f0da546/slides/01_data-manipulation-noanswers.html). Submit using this [link](https://classroom.github.com/a/kGB7qVRf) and following the instructions [here](https://www.youtube.com/watch?v=O0XcZ-c_oF8). 
 4. R Markdown, LaTeX and other tools for reproducible research (Sep 8)
-    - Homework 2 due 
+    - Homework 2 due. [Instructions and submission link here.](https://classroom.github.com/a/VrRecub6) 
 5. Econometrics in R (Sep 22) 
 
 ## Do you have a question, you can't access the material or your code doesn't run?
