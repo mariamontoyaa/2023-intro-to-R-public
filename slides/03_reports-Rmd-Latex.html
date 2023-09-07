@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Data Visualization</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Intro to R course" />
+    <script src="03_reports-Rmd-Latex_files/header-attrs-2.24/header-attrs.js"></script>
+    <link href="03_reports-Rmd-Latex_files/countdown-0.4.0/countdown.css" rel="stylesheet" />
+    <script src="03_reports-Rmd-Latex_files/countdown-0.4.0/countdown.js"></script>
+    <script src="03_reports-Rmd-Latex_files/htmlwidgets-1.6.2/htmlwidgets.js"></script>
+    <link href="03_reports-Rmd-Latex_files/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
+    <script src="03_reports-Rmd-Latex_files/datatables-binding-0.29/datatables.js"></script>
+    <script src="03_reports-Rmd-Latex_files/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+    <link href="03_reports-Rmd-Latex_files/dt-core-1.13.4/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="03_reports-Rmd-Latex_files/dt-core-1.13.4/css/jquery.dataTables.extra.css" rel="stylesheet" />
+    <script src="03_reports-Rmd-Latex_files/dt-core-1.13.4/js/jquery.dataTables.min.js"></script>
+    <link href="03_reports-Rmd-Latex_files/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet" />
+    <script src="03_reports-Rmd-Latex_files/crosstalk-1.2.0/js/crosstalk.min.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+&lt;style type="text/css"&gt;
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue:wght@400;700&amp;display=swap');
+pre {
+    display: block;
+    font-family: monospace;
+    white-space: pre;
+    margin: 1em 0px;
+    margin-top: 0em;
+    margin-right: 0px;
+    margin-bottom: 0em;
+    margin-left: 0px;
+    white-space: pre-wrap;
+}
+
+p {
+    line-height: 22px;
+}
+
+h1{
+  margin-bottom: -20px;
+}
+
+h2{
+  margin-bottom: -11px;
+}
+
+h3{
+  margin-bottom: -10px;
+}
+
+.emphasized {
+   font-size: 1.2em;
+   font-family: Nunito;
+}
+
+.greenemph {
+   font-size: 1.2em;
+   font-family: Nunito;
+   color: #69995D
+}
+
+.greenhead {
+   font-size: 35px;
+   font-family: Nunito;
+   color: #69995D
+}
+
+.nunito {
+   font-size: 25px;
+   font-family: Nunito;
+}
+
+.nunitosm {
+   font-family: Nunito;
+}
+.nunitosmgrey {
+   font-family: Nunito;
+   color: #E8E9E8
+}
+
+.invisible {
+   color: white;
+}
+
+.remark-code {
+background: #green;
+}
+
+&lt;/style&gt;
+
+
+
+
+
+
+
+
+
+&lt;br&gt;
+&lt;br&gt; 
+&lt;br&gt; 
+&lt;br&gt; 
+&lt;br&gt; 
+&lt;br&gt; 
+&lt;br&gt; 
+.center[
+# REPORTS IN R MARKDOWN &amp; OTHER TOOLS
+.nunito[LECTURE 3]
+.greenhead[INTRO TO R PROGRAMMING]
+
+**MARIA MONTOYA-AGUIRRE**
+
+M1 APE @ PARIS SCHOOL OF ECONOMICS
+]
+
+
+---
+### HOMEWORK REVIEW 
+.center[
+&lt;img src="inputs/03_playfair-wages-wheat.jpeg" width="80%" /&gt;
+]
+
+---
+### HOMEWORK REVIEW 
+.center[
+&lt;img src="inputs/03_playfair_homework_amazing.png" width="80%" /&gt;
+]
+
+---
+
+### YOUR HOMEWORKS
+.center[
+&lt;img src="inputs/03_hw1.png" width="80%" /&gt;
+]
+
+---
+### YOUR HOMEWORKS
+.center[
+&lt;img src="inputs/03_hw2.png" width="80%" /&gt;
+]
+
+---
+### YOUR HOMEWORKS
+.center[
+&lt;img src="inputs/03_hw3.png" width="50%" /&gt;
+]
+
+---
+### YOUR HOMEWORKS
+.center[
+&lt;img src="inputs/03_hw4.jpeg" width="80%" /&gt;
+]
+
+---
+### YOUR HOMEWORKS
+.center[
+&lt;img src="inputs/03_hw5.png" width="80%" /&gt;
+]
+
+---
+### YOUR HOMEWORKS
+.center[
+&lt;img src="inputs/03_hw6.png" width="80%" /&gt;
+]
+
+---
+### YOUR HOMEWORKS
+.center[
+&lt;img src="inputs/03_hw7.png" width="80%" /&gt;
+]
+
+---
+### YOUR HOMEWORKS
+.center[
+&lt;img src="inputs/03_hw8.png" width="80%" /&gt;
+]
+
+---
+### YOUR HOMEWORKS
+.center[
+&lt;img src="inputs/03_hw9.png" width="70%" /&gt;
+]
+
+---
+# WARM UP
+- We are going to use the ["Fichier des prénoms"]() data
+  - This is where the INSEE reports the birth count associated with each first name in France
+  - It is virtually exhaustive from 1946, when the INSEE was founded
+
+```r
+names &lt;- read.csv("../data/03_fichier_prenoms.csv", sep = ";", encoding = "UTF-8")
+str(names)
+```
+
+```
+## 'data.frame':	686538 obs. of  4 variables:
+##  $ sexe    : int  1 1 1 1 1 1 1 1 1 1 ...
+##  $ preusuel: chr  "_PRENOMS_RARES" "_PRENOMS_RARES" "_PRENOMS_RARES" "_PRENOMS_RARES" ...
+##  $ annais  : chr  "1900" "1901" "1902" "1903" ...
+##  $ nombre  : int  1249 1342 1330 1286 1430 1472 1451 1514 1509 1526 ...
+```
+
+- `sexe:` 1 for Male and 2 for Female
+- `preusuel:` first name (_PRENOMS_RARES gathers rare first names for anonymity considerations)
+- `annais:` birth year (XXXX groups unknown birth years)
+- `nombre:` number of newborns for the corresponding sex/name/year
+
+---
+class: inverse
+# WARM UP
+1) Recode the `sexe` variable with Male and Female instead of 1 and 2
+
+2) Filter out observations for which `annais` is XXXX and convert annais to numeric
+
+3) Summarise your data into the total number of births per year
+
+4) Plot the evolution of the number of births over time using a line geometry
+
+Don't forget to load the necessary packages!
+<div class="countdown" id="timer_732afef1" data-update-every="1" tabindex="0" style="right:0;bottom:0;">
+<div class="countdown-controls"><button class="countdown-bump-down">&minus;</button><button class="countdown-bump-up">&plus;</button></div>
+<code class="countdown-time"><span class="countdown-digits minutes">10</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
+</div>
+
+
+---
+### ANSWERS
+
+```r
+library(dplyr)
+library(ggplot2)
+```
+1) Recode the `sexe` variable with Male and Female instead of 1 and 2
+
+```r
+names %&gt;% 
+* mutate(sex = ifelse(sexe == 1, "Male", "Female"))
+```
+
+2) Filter out observations for which `annais` is XXXX and convert annais to numeric
+
+```r
+names %&gt;% 
+  mutate(sex = ifelse(sexe == 1, "Male", "Female")) %&gt;% 
+* filter(annais != "XXXX") %&gt;%
+* mutate(annais = as.numeric(annais))
+```
+---
+### ANSWERS
+
+3) Summarise your data into the total number of births per year
+
+```r
+names %&gt;% 
+  mutate(sex = ifelse(sexe == 1, "Male", "Female")) %&gt;% 
+  filter(annais != "XXXX") %&gt;% 
+  mutate(annais = as.numeric(annais)) %&gt;% 
+* group_by(annais) %&gt;%
+* summarise(n = sum(nombre))
+```
+
+```
+## # A tibble: 122 × 2
+##    annais      n
+##     &lt;dbl&gt;  &lt;int&gt;
+##  1   1900 415040
+##  2   1901 453456
+##  3   1902 465791
+##  4   1903 468810
+##  5   1904 478962
+##  6   1905 489697
+##  7   1906 501745
+##  8   1907 501025
+##  9   1908 525490
+## 10   1909 526233
+## # ℹ 112 more rows
+```
+
+---
+### ANSWERS
+
+4) Plot the evolution of the number of births over time using a line geometry
+
+```r
+names %&gt;% 
+  mutate(sex = ifelse(sexe == 1, "Male", "Female")) %&gt;% 
+  filter(annais != "XXXX") %&gt;% 
+  mutate(annais = as.numeric(annais)) %&gt;% 
+  group_by(annais) %&gt;%  
+  summarise(n = sum(nombre)) %&gt;% 
+* ggplot(aes(x = annais, y  = n)) +
+* geom_line()
+```
+
+&lt;img src="03_reports-Rmd-Latex_files/figure-html/unnamed-chunk-21-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# AGENDA
+.nunitosm[
+
+.pull-left[
+.nunitosmgrey[]
+- R MARKDOWN BASICS
+
+- USEFUL FEATURES
+
+- LATEX FOR EQUATIONS 
+
+
+
+]
+
+.pull-right[
+
+- BEST CODING PRACTICES 
+
+- OTHER TOOLS 
+  1. GitHub
+  2. Reference manager
+  3. Coding library
+]
+ ]
+ 
+---
+ 
+ # R MARKDOWN BASICS
+ - A type of document (.Rmd) in which you can both **write/run R code** and edit text 
+ 
+ - Produces **dynamic documents* that are generated by a script and updated automatically every time the script runs.
+ 
+--
+
+ - Good for research transparency and simple documents that don't require a lot of format. No need of copying and pasting outputs into a document editor. 
+ 
+ - You can use R Markdown to create different types of documents, presentations (like this one!), dashboards, and  even books. See many examples in [this gallery](https://rmarkdown.rstudio.com/gallery.html)
+ 
+ --
+ 
+ - It is structured around 3 types of content: 
+  - **Code chunks** to run code and render its output
+  - **Editable text** to display
+  - **YAML metadata** to specify the process to build the R Markdown
+
+&lt;br&gt;
+.center[
+.greenemph[LET'S START BY CREATING OUR FIRST R MARKDOWN]]
+ 
+---
+### R MARKDOWN BASICS
+Click on **File &gt; New File &gt; R Markdown ...**
+
+.pull-left[
+![](inputs/03_new-rmd.png)&lt;!-- --&gt;
+]
+
+.pull-right[
+1. Fill out the information and select HTML
+2. Click **OK**
+]
+
+---
+### THE ANATOMY
+It creates a template document with **3 types of content:** 
+
+
+![](inputs/03_template-Rmd.png)&lt;!-- --&gt;
+
+---
+### THE ANATOMY
+It creates a template document with **3 types of content:** 
+
+
+![](inputs/03_template-Rmd-yaml.jpg)&lt;!-- --&gt;
+
+---
+### THE ANATOMY
+It creates a template document with **3 types of content:** 
+
+
+![](inputs/03_template-Rmd-code.png)&lt;!-- --&gt;
+
+---
+### THE ANATOMY
+It creates a template document with **3 types of content:** 
+
+
+![](inputs/03_template-Rmd-text.png)&lt;!-- --&gt;
+
+
+---
+### YAML HEADER
+- **YAML Ain't Markup Language -&gt; It's configuration.**  It gives instructions on how to *render* the document. 
+
+--
+
+- Contains specific arguments:
+  - Title (also subtitle)
+  - Author
+  - Date
+  - Output type: `html_document`, `pdf_document` 
+  - We can also include other parameters that are referenced later in the document (more on this later)
+- Specified at the **very beggining** of the document enclosed by **three dashes** `---`
+
+--
+
+
+---
+### TEXT/NARRATIVE
+You can write paragraphs as you would do in a text editor.
+- Text can be formatted using [Markdown syntax](https://www.markdownguide.org/cheat-sheet/) (enough formatting to ensure readability but simple to use to focus on the content)
+  - No clicking on buttons to create text formatting, instead we use **symbols** that need to be written along the text. 
+  
+- Not all our narrative needs to be human-written. We'll see how our code can help generate parts of the text. For example, we can combine words into our list with the values of a variable, we can calculate a statistic directly in the text using inline R code, or [write a bibliography](https://bookdown.org/yihui/rmarkdown-cookbook/bibliography.html#bibliography). 
+
+---
+.pull-left[
+.nunito[SYNTAX] &lt;br&gt;
+`Plain text`  
+
+End a line with two spaces for  line break    
+`*italics*`  
+`**bold**  `  
+`***bold+italics***  `
+&lt;br&gt;
+&lt;br&gt; 
+&lt;br&gt; 
+&lt;br&gt; 
+`# Header 1`
+&lt;br&gt; 
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+`## Header 2`
+
+`[link](https://www.google.com)`  
+
+`&gt; block quote`
+
+`***`  
+
+]
+
+.pull-right[
+.nunito[OUTPUT] &lt;br&gt;
+Plain text 
+
+End a line with two spaces for line break  
+*italics*  
+**bold**  
+***bold+italics***  
+# Header 1
+## Header 2
+...  
+[link](https://www.google.com)
+&gt; block quote  
+
+***  
+
+]
+
+---
+
+.pull-left[
+`* item 1`    
+`* item 2`    
+&amp;nbsp;`+ sub-item `  
+&lt;br&gt;
+`1. ordered list`  
+`2. item 2`
+&amp;nbsp;`- sub-item `  &lt;br&gt;
+
+
+&lt;br&gt;
+
+```
+| Column 1  | Column 2 |
+|-----------|----------|
+| Row 1     | Row 2    |
+
+
+```
+
+&lt;br&gt; 
+```
+| Column 1      | Column 2 |
+|--------|----------|
+| Row 1     |  Row 2    |
+
+
+```
+]
+
+.pull-right[
+* item 1
+* item 2
+    + sub-item 1
+1. ordered list
+2. item 2
+  - sub-item 
+&lt;br&gt;
+&lt;br&gt;
+
+| Column 1  | Column 2 |
+|-----------|----------|
+| Row 1     | Row 2    |
+
+&lt;br&gt; 
+
+| Column 1      | Column 2 |
+|--------|----------|
+| Row 1     |  Row 2    |
+]
+
+
+---
+
+### CODE CHUNKS
+- The code in each chunk is run by R and its output is translated to the document. The document is kept in sync with the code! If the data we are working with, or the code we write changes, the document will too. 
+
+- A code chunk usually starts with ` ```{}` and ends with ` ``` `. You can insert one by writing the fences or **chunk delimiters** or by using `Ctrl + Alt + i ` 
+
+
+````md
+```{r}
+x &lt;- 5  
+x 
+```
+````
+
+
+
+- When the document renders, R will run the code, so both the code and the output will appear in the document:
+
+
+```r
+x &lt;- 5 
+x
+```
+
+```
+## [1] 5
+```
+
+---
+### CODE CHUNKS
+
+- You can customize the behavior and output of code chunks through chunk options (provided inside the curly brackets `{}`
+
+- For example, to display only the output and not the code chunk, you set `echo = FALSE`
+
+````md
+```{r, echo = F} 
+x &lt;- 5 
+x
+```
+````
+
+And the output will only be:
+
+```
+## [1] 5
+```
+
+---
+### CODE CHUNKS
+&lt;br&gt;
+
+| Option | Default | Effect
+|---|---|---| 
+| eval | TRUE | Evaluate the code and include its results? | 
+| echo | TRUE | Display the code and include its results? | 
+| warning | TRUE | Display warnings? | 
+| error | FALSE | Display errors? | 
+| message | TRUE | Display messages? | 
+| results | 'markup' | How to render code output? 'hide' hides output | 
+| fig.width | 7 | Width in inches for plots created in the chunk| 
+| fig.height | 7 | Height in inches for plots created in the chiunk| 
+
+---
+
+### RUN AND KNIT YOUR CODE 
+
+- To execute the content of a code chunk in R Markdown:   
+  - Click on the green play button at the top right of the chunk ![image](inputs/03_current_chunk.png)
+
+.pull-left[
+You can also:
+- Run **all chunks above** the current chunk  ![image](inputs/03_all_chunks_above.png)
+- Run **all chunks** from the Run dropdown menu at the top right (`Ctrl+Alt+R`)
+.center[![image](inputs/03_run_all.png)]
+]
+
+.pull-left[
+- To choose where the output must be displayed while working on the .Rmd, click on the ⚙️ button
+  .center[![image](inputs/03_inline.png)]
+
+]
+
+---
+### RUN AND KNIT YOUR CODE 
+To render an R Markdown file, click on the **knit button**    .center[![image](inputs/03_knit.png)] (`Ctrl + Shift + K `))
+
+.pull-left[
+.center[![image](inputs/03_rmarkdown.png)] 
+]
+
+.pull-right[
+.center[![image](inputs/03_rmd_html.png)] 
+
+]
+---
+
+
+# AGENDA
+.nunitosm[
+
+.pull-left[
+.nunitosmgrey[
+- R MARKDOWN BASICS]
+
+- USEFUL FEATURES
+
+- LATEX FOR EQUATIONS 
+
+
+
+]
+
+.pull-right[
+
+- BEST CODING PRACTICES 
+
+- OTHER TOOLS 
+  1. GitHub
+  2. Reference manager
+  3. Coding library
+]
+ ]
+ 
+---
+### INLINE CODE
+- A big advantage of R Markdown is that you can **automate** your reports
+  - Imagine you figure out late in the process that you need to change something important that changes results!   - With R Markdown you can just change the code to fix it and the tables and figures will **update automatically** 
+
+--
+But, what if you wrote some of the results within **paragraphs?** 
+- You might be able to update them automatically too! 
+
+---
+
+Imagine there's a problem with the observations for which `dist &gt; 100` and you need to remove them 
+
+.pull-left[
+![image](inputs/03_cars_rmd.png)
+]
+
+.pull-right[
+![image](inputs/03_cars_html.png)
+]
+---
+
+ All the results are updated but not the ones mentioned in the text. We can use **inline code** to make our paragraphs dynamic too.
+ 
+**Inline code** allows to include the output of some **R code within text areas** of your report 
+ 
+ - R code outside code chunks should be included between backticks
+ - Surroding text with backticks will change the **format** to that of the code chunk
+ - Adding the letter **r** after the first backtick will **show the output** 
+ 
+ .pull-left[
+ .nunito[**SYNTAX**]
+ ````md
+ `paste("a", "b", sep = "-")`
+  ````
+ 
+&lt;br&gt;
+
+ ````md
+ a-b
+````
+
+]
+ 
+ .pull-right[
+ .nunito[**OUTPUT**]
+
+ `paste("a", "b", sep = "-")` 
+
+&lt;br&gt; 
+ 
+ a-b
+
+]
+ 
+
+
+
+
+---
+### Setting the default chunk options
+
+````md
+```{r}
+knitr::opts_chunk$set(
+  comment = "#&gt;", echo = FALSE, fig.width = 6
+```
+````
+
+---
+
+&lt;br&gt;
+
+.pull-left[
+![image](inputs/03_cars_rmd2.png)
+]
+
+.pull-right[
+![image](inputs/03_cars_html2.png)
+]
+---
+### TABLES
+
+- Displaying a table as a raw output can be unpleasant to read
+
+```r
+head(mtcars, 3)
+```
+
+```
+##                mpg cyl disp  hp drat    wt  qsec vs am gear carb
+## Mazda RX4     21.0   6  160 110 3.90 2.620 16.46  0  1    4    4
+## Mazda RX4 Wag 21.0   6  160 110 3.90 2.875 17.02  0  1    4    4
+## Datsun 710    22.8   4  108  93 3.85 2.320 18.61  1  1    4    1
+```
+
+- Prettier tables are produced with the `kable()` function from the package `{knitr}`
+
+
+```r
+library("knitr")
+
+kable(head(mtcars, 3), caption = "First three rows of the dataset")
+```
+
+
+
+Table: First three rows of the dataset
+
+|              |  mpg| cyl| disp|  hp| drat|    wt|  qsec| vs| am| gear| carb|
+|:-------------|----:|---:|----:|---:|----:|-----:|-----:|--:|--:|----:|----:|
+|Mazda RX4     | 21.0|   6|  160| 110| 3.90| 2.620| 16.46|  0|  1|    4|    4|
+|Mazda RX4 Wag | 21.0|   6|  160| 110| 3.90| 2.875| 17.02|  0|  1|    4|    4|
+|Datsun 710    | 22.8|   4|  108|  93| 3.85| 2.320| 18.61|  1|  1|    4|    1|
+
+
+
+---
+
+## TABLES
+For  **big tables** you can use the `datatable()` function from the package `{DT}`
+
+
+```r
+library("DT")
+
+datatable(mtcars, options = list(pageLength = 5))
+```
+
+<div class="datatables html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-f978b6ddbb58b3c2152f" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-f978b6ddbb58b3c2152f">{"x":{"filter":"none","vertical":false,"data":[["Mazda RX4","Mazda RX4 Wag","Datsun 710","Hornet 4 Drive","Hornet Sportabout","Valiant","Duster 360","Merc 240D","Merc 230","Merc 280","Merc 280C","Merc 450SE","Merc 450SL","Merc 450SLC","Cadillac Fleetwood","Lincoln Continental","Chrysler Imperial","Fiat 128","Honda Civic","Toyota Corolla","Toyota Corona","Dodge Challenger","AMC Javelin","Camaro Z28","Pontiac Firebird","Fiat X1-9","Porsche 914-2","Lotus Europa","Ford Pantera L","Ferrari Dino","Maserati Bora","Volvo 142E"],[21,21,22.8,21.4,18.7,18.1,14.3,24.4,22.8,19.2,17.8,16.4,17.3,15.2,10.4,10.4,14.7,32.4,30.4,33.9,21.5,15.5,15.2,13.3,19.2,27.3,26,30.4,15.8,19.7,15,21.4],[6,6,4,6,8,6,8,4,4,6,6,8,8,8,8,8,8,4,4,4,4,8,8,8,8,4,4,4,8,6,8,4],[160,160,108,258,360,225,360,146.7,140.8,167.6,167.6,275.8,275.8,275.8,472,460,440,78.7,75.7,71.09999999999999,120.1,318,304,350,400,79,120.3,95.09999999999999,351,145,301,121],[110,110,93,110,175,105,245,62,95,123,123,180,180,180,205,215,230,66,52,65,97,150,150,245,175,66,91,113,264,175,335,109],[3.9,3.9,3.85,3.08,3.15,2.76,3.21,3.69,3.92,3.92,3.92,3.07,3.07,3.07,2.93,3,3.23,4.08,4.93,4.22,3.7,2.76,3.15,3.73,3.08,4.08,4.43,3.77,4.22,3.62,3.54,4.11],[2.62,2.875,2.32,3.215,3.44,3.46,3.57,3.19,3.15,3.44,3.44,4.07,3.73,3.78,5.25,5.424,5.345,2.2,1.615,1.835,2.465,3.52,3.435,3.84,3.845,1.935,2.14,1.513,3.17,2.77,3.57,2.78],[16.46,17.02,18.61,19.44,17.02,20.22,15.84,20,22.9,18.3,18.9,17.4,17.6,18,17.98,17.82,17.42,19.47,18.52,19.9,20.01,16.87,17.3,15.41,17.05,18.9,16.7,16.9,14.5,15.5,14.6,18.6],[0,0,1,1,0,1,0,1,1,1,1,0,0,0,0,0,0,1,1,1,1,0,0,0,0,1,0,1,0,0,0,1],[1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,1,1,1,1,1,1,1],[4,4,4,3,3,3,3,4,4,4,4,3,3,3,3,3,3,4,4,4,3,3,3,3,3,4,5,5,5,5,5,4],[4,4,1,1,2,1,4,2,2,4,4,3,3,3,4,4,4,1,2,1,1,2,2,4,2,1,2,2,4,6,8,2]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>mpg<\/th>\n      <th>cyl<\/th>\n      <th>disp<\/th>\n      <th>hp<\/th>\n      <th>drat<\/th>\n      <th>wt<\/th>\n      <th>qsec<\/th>\n      <th>vs<\/th>\n      <th>am<\/th>\n      <th>gear<\/th>\n      <th>carb<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"columnDefs":[{"className":"dt-right","targets":[1,2,3,4,5,6,7,8,9,10,11]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+
+
+---
+### THEMES
+- You can change the appearance of the document using a variaety of **preset themes**
+- They need to be specified in the **YAML header** using a **theme argument** 
+
+
+
+```r
+---
+title: "My First R Markdown"
+author: "María Montoya-Aguirre"
+date: "2023-08-01"
+output: 
+  html_document:
+*   theme: cosmo
+---
+```
+
+- See [R Markdown theme gallery](https://www.datadreaming.org/post/r-markdown-theme-gallery/)
+
+.pull-left[
+![image](inputs/03_cerulean.png)]
+.pull-right[
+![image](inputs/03_journal.png)] 
+
+---
+class: inverse
+.pull-left[
+### PRACTICE 
+&lt;br&gt;
+Reproduce the following html document using R markdown
+&lt;br&gt;
+Use `theme: cosmo` 
+]
+
+.pull-right[![image](inputs/03_practice_report.png)]
+---
+
+### USEFUL FEATURES
+.greenhead[REPORT PARAMETERS]
+
+Sometimes it can be useful to produce separate reports for different groups in your data
+- Country/state-specific reports
+- Here, a different report for each first name
+
+For this, we can use **YAML parameters**, which work similarly to an **object** in your environment
+
+```{=md}
+---
+title: "Report on the first name `r params$name`" 
+author: "your name here"
+date: "September 2023"
+output: 
+  html_document:
+    theme: cosmo
+params: 
+  name: "MARIE" 
+---  
+```
+
+---
+### REPORT PARAMETERS
+
+````md
+
+### 3. Evolution of the first name `r params$name` over time 
+
+```{r}
+  names %&gt;% 
+    filter(name == params$name) %&gt;% 
+    ggplot(aes(x = year, y = births,
+               color = sex)) +
+    geom_line()
+```
+
+`r sum(names[names$name== params$name &amp; names$year == 2021, "births"])` children were born under the name `r params$name` in 2021. This statistic is written in **inline code** so it updates automatically. 
+  
+```
+
+.center[
+.nunito[Let's knit our .Rmd with a different name!]
+] 
+
+
+---
+
+
+
+.pull-left[
+![image](inputs/03_report_ahmed.png)
+]
+
+.pull-right[
+![image](inputs/03_report_camille.png)
+]
+
+---
+### USEFUL FEATURES 
+
+You can knit reports with different parameters on different documents on a separate script using the function `render()` `like this:
+
+```r
+library(rmarkdown)
+render(
+  input = "../code/03_practice_report_params.Rmd",          # Specify the input .Rmd
+  output_file = "C:/User/Documents/MARIE.html",             # Specify the output file
+  params = list(name = "MARIE")                             # Specify the YAML parameter(s)
+)
+```
+
+
+To avoid copy-pasting this command multiple times we can use a **loop** 
+1. First we should name the object that will successively take the value of each first name
+2. Then indicate which values this object must successively take
+3. Then indicate what to do at each iteration
+4. And this should depend on the object that successively take each value
+
+
+```r
+for (i in c("MARIE", "AHMED", "LOUIS", "CAMILLE")) {
+  render(
+    input = "../code/03_practice_report_params.Rmd",  
+    output_file = paste0("C:/User/Documents/", i, ".html"),
+    params = list(name = i)
+  )  
+}
+```
+
+---
+
+
+### LaTeX 
+- LaTeX is a document preparation system. It is similar to R Markdown in the sense that you:
+  - Edit your text in a script using commands and symbols
+  - Compile the script to get the output
+
+- LaTeX is the preferred typesetting system for most academic fields mainly because:
+ - Many things can be automated in LaTeX
+ - It has a good way to typeset mathematical formulas
+
+You can [learn LaTeX in 30 minutes](https://www.overleaf.com/learn/latex/Learn_LaTeX_in_30_minutes) and easily use it on [Overleaf](https://www.overleaf.com/) (great for shared documents)
+ 
+You can use it to write equations in R Markdown anywhere in the text, enclosed by `$$` or `$` 
+
+.pull-left[
+```{=latex}
+`$$\bar{x}=\frac{1}{N}\sum_{i=1}^Nx_i$$`
+```
+
+]
+
+.pull-right[
+`\(\bar{x}=\frac{1}{N}\sum_{i=1}^Nx_i\)`
+]
+
+---
+
+
+# AGENDA
+.nunitosm[
+
+.pull-left[
+.nunitosmgrey[
+- R MARKDOWN BASICS
+
+- USEFUL FEATURES
+
+- LATEX FOR EQUATIONS 
+
+]
+
+]
+
+.pull-right[
+
+- BEST CODING PRACTICES 
+
+- OTHER TOOLS 
+]
+ ]
+
+
+---
+
+### BEST CODING* PRACTICES
+Highlights from [Reproducible Research Fundamentals](https://osf.io/byvwx/) course by DIME Analytics 
+
+.center[
+.nunito[Delicious meals are just as important as recipes!] ]
+&lt;br&gt;
+&lt;br&gt;
+1. Organize and name your files appropriately
+
+2. Write the **full** recipe! (Write a master script and a README)
+
+3. Write code that others (future you!) can read (comments, spacing &amp; style)
+
+4. Keep improving your skills (when your code works you're only half done)
+
+5. Track your changes (Use a version control tool)
+
+---
+
+### 1. Organize and name your files appropriately!
+
+.nunito[Working directories] 
+- The working directory is just a file path on your computer that sets the default location of any files you read into R, or save out of R. In other words, a working directory is like a little flag somewhere on your computer which is tied to a specific analysis project. 
+
+- If you ask R to import a dataset from a text file, or save a dataframe as a text file, it will assume that the file is inside of your working directory.
+- To see your current working directory, use `getwd()` and `setwd()` to establish a different one
+
+- When you are working with .Rmd files, the working directory is automatically set to the folder that contains the .Rmd file. For example, if the. file is: `~/Downloads/foo.Rmd`, under which R code chunks are evaluated is` ~/Downloads/`.
+  - This is useful! This also happens when you work with [R Projects](https://support.posit.co/hc/en-us/articles/200526207-Using-RStudio-Projects) (File &gt; New File &gt; New Project). They are very useful for dividing work into multiple contexts and calling all you need at once
+
+---
+
+### 1. Organize and name your files appropriately!
+.nunito[Naming things]
+.center[![image](inputs/03_organizing_files.png)]
+- Separate code for cleaning and analysis
+- [Naming your files](http://www2.stat.duke.edu/~rcs46/lectures_2015/01-markdown-git/slides/naming-slides/naming-slides.pdf) (machine readable, human readable and fit for ordering). Use regular expressions. 
+  - `2023-08_WBLCHILDCARE_abstract.doc`
+  - `2023-08_WBLCHILDCARE_submission_AEJ.doc`
+  - `2023-10_WBLCHILDCARE_submission_QJE.doc`
+
+---
+
+###  2. Write the full recipe!
+.nunito[The master script] Write down all the instructions from the raw data to the final report
+- It compactly and reproducibly runs all the scripts needed for the project
+  Code starts to pile up quickly. Keep your scripts short and focused (cleaning each dataset, merging)
+- It establishes an identical workspace between users by specifying settings, installing packages, and setting parameters
+- It maps the files within the data folder and serves as a starting point to find data, scripts or outputs 
+
+Structure:
+0. Intro header with main information about the project
+1. Specify required packages to install and run user-created programs
+2. Specify settings like the R version used, default theme for graphs and tables, etc.
+3. Define units and assumptions. For example, conversion rates and units used, list of control variables to be used
+4. Run scripts 
+
+---
+
+.center[![image](inputs/03_cleaning_master.png)]
+
+
+---
+
+### 3. Write code that others (future you!) can read 
+
+.pull-left[
+![](inputs/03_white_space.png)&lt;!-- --&gt;
+]
+
+.pull-right[
+![](inputs/03_white_space2.png)&lt;!-- --&gt;
+]
+
+- White space makes everything better.&lt;br&gt; 
+- Using `# Headers ---` and indenting creates a useful outline 
+- Follow [The tidyverse style guide](https://style.tidyverse.org/). Lines &lt; 80 characters. 
+---
+
+### 4. Keep improving your skills 
+
+.nunito[When your code works you're only half done]
+
+.pull-left[
+
+```r
+data %&gt;% 
+  mutate(
+    province = str_to_title(province),
+    region = str_to_title(region),
+    commune = str_to_title(commune),
+    district = str_to_title(district),
+    name = str_to_title(name),
+  )
+```
+]
+
+.pull-right[
+
+```r
+data %&gt;% 
+  mutate(
+    across(
+      c(province, region, commune, district, name),
+      ~str_to_title(.)
+    )
+  )
+```
+]
+
+
+- Don't repeat yourself 
+
+- Don't write code that is too long (you're doing too many things at once)
+
+- Defense programming: write tests to check your data. 
+
+- No magic constants: `data[x &lt; 58.7,]` vs `data[x &lt; mean(median(data$x))]`
+
+---
+### 5. Keep track of your work
+.pull-left[
+- Your code will constantly change, but when you us a version control tool like Git/GitHub you will always have access to previous versions of your code
+- Using file naming conventions (such adding dates and initials as suffixes) is better than no version control, but it can get out of control very quickly
+- Syncing software (such as OneDrive and Dropbox) allow teams to revert to old version of a document, but not to track specific changes
+- *git* is currently the best version control system out there as one can track changes and revert to old versions easily
+
+Learn how to use GitHub with [DIME Analytics GitHub trainings](https://osf.io/e54gy/). Start [here](https://osf.io/s6hf7) 
+]
+
+.pull-right[
+&lt;img src="inputs/03_finaldoc_meme.jpg" width="80%" /&gt;
+
+]
+
+---
+### OTHER TOOLS
+
+.greenhead[Reference manager]
+- Applications like Zotero or Mendeley allow you to collect, organize, and export bibliographic references or citations. You can store the actual PDFs there, annotate them and associate notes to them. 
+
+- Easily send a paper or book to your Zotero/Mendeley library with a [browser extension](https://chrome.google.com/webstore/detail/zotero-connector/ekhagklcjbdpajgpjgmbionohlpdbjgc?hl=es). 
+- You can create a bibliography with two clicks (export a BibTex file) and [add it to your report on R Markdown](https://bookdown.org/yihui/rmarkdown-cookbook/bibliography.html).  
+
+---
+class:center 
+![image](inputs/03_zotero.png)
+---
+### OTHER TOOLS
+
+.greenhead[Reference manager]
+- Applications like Zotero or Mendeley allow you to collect, organize, and export bibliographic references or citations. You can store the actual PDFs there, annotate them and associate notes to them. 
+
+- Easily send a paper or book to your Zotero/Mendeley library with a [browser extension](https://chrome.google.com/webstore/detail/zotero-connector/ekhagklcjbdpajgpjgmbionohlpdbjgc?hl=es). 
+- You can create a bibliography with two clicks (export a BibTex file) and [add it to your report on R Markdown](https://bookdown.org/yihui/rmarkdown-cookbook/bibliography.html).  
+
+.greenhead[Create your code library]
+- Whenever you learn to do something new in R, write a quick note about it and add a reusable snippet of code 
+- When working with certain data, you'll find yourself doing the same tasks over and over again. You don't want to write your code from scratch every time. 
+  - For example, I always have to create geographic IDs from state and municipality variables. I have a snippet in my code library (basically a function) that I just call to do this. 
+  
+---
+
+
+---
+# Resources
+- Tidyverse style guide https://style.tidyverse.org/ 
+- Checklist on regression output https://blogs.worldbank.org/impactevaluations/crowd-sourced-checklist-top-10-little-things-drive-us-crazy-regression-output 
+- Intro to R Markdown by DIME https://raw.githack.com/worldbank/dime-r-training/main/Presentations/07-r-markdown.html#1 
+- Spatial data  https://raw.githack.com/worldbank/dime-r-training/main/Presentations/06-spatial-data.html#1 
+- Blog posts by David McKenzie https://blogs.worldbank.org/impactevaluations/curated-list-our-postings-technical-topics-your-one-stop-shop-methodology-0 
+  - DIME coding standards https://github.com/worldbank/dime-standards/tree/master/dime-coding-standards/checklists 
+  - DIME research standards https://github.com/worldbank/dime-standards/#dime-coding-standards 
+  - Writing reports in R markdown https://book.rwithoutstatistics.com/rmarkdown-chapter 
+  https://worldbank.github.io/dime-data-handbook/ 
+  
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightLines": true,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
