@@ -1,0 +1,38 @@
+---
+title: "Report on the first name MARIE"
+author: "your name here"
+date: "September 2023"
+output: 
+  html_document:
+    theme: cosmo
+  
+---
+### 1. Setup
+The packages needed in an Rmd must *always* be loaded in a code chunk at the beginning of the file
+```{r, message = F}
+library(dplyr)
+library(ggplot2)
+```
+However, the command `install.packages()` must **not** be written in an R Markdown. It should be run only once in the console. 
+
+### 2. Data cleaning
+```{r, results = 'hide'}
+names <- read.csv("../data/03_fichier_prenoms.csv", sep = ";", encoding = "UTF-8") %>% 
+  mutate(sex = ifelse(sexe == 1, "Male", "Female")) %>% 
+  rename(year = annais, births = nombre, name = preusuel) %>% 
+  filter(year != "XXXX") %>% 
+  mutate(year = as.numeric(year))
+```
+
+### 3. Evolution of the first name MARIE over time 
+```{r}
+names %>% 
+  filter(name == "MARIE") %>% 
+  ggplot(aes(x = year, y = births,
+             color = sex)) +
+  geom_line()
+        
+```
+
+`r sum(names[names$name== "MARIE" & names$year == 2021, "births"])` children were born under the name MARIE in 2021. This statistic is written in **inline code** so it updates automatically. 
+
