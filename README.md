@@ -14,12 +14,15 @@ The objective of this course is to provide you with the necessary bases in R pro
 - Homework should be turned in by 9 am. 🍬 Here is an incentive: if you hand in all your homework on time, independent of your performance on the assigned tasks, I will be available to answer any R questions throughout the academic year. You'll just need to add an issue here or send me an e-mail.
 
 ## Lectures:
+You can find the pdf version of the slides in the `slides` folder. 
 1. Data manipulation (Sep 4)
-       [Slides here](https://github.com/mariamontoyaa/2023-intro-to-R-public/blob/d22d568bf491066d70795a6b56f135c56f0da546/slides/01_data-manipulation-noanswers.html) 
+    -   [Slides](https://github.com/mariamontoyaa/2023-intro-to-R-public/blob/main/slides/01_data-manipulation-full.html) 
 3. Data visualization (Sep 6)
+    - [Slides](https://github.com/mariamontoyaa/2023-intro-to-R-public/blob/2ecbd8064296e5b9d9551bccd7fc2b3cacce768d/slides/02_data-visualization.html)
     - Homework 1 due [last slide of lecture 1](https://github.com/mariamontoyaa/2023-intro-to-R-public/blob/d22d568bf491066d70795a6b56f135c56f0da546/slides/01_data-manipulation-noanswers.html). Submit using this [link](https://classroom.github.com/a/kGB7qVRf) and following the instructions [here](https://www.youtube.com/watch?v=O0XcZ-c_oF8). 
 4. R Markdown, LaTeX and other tools for reproducible research (Sep 8)
-    - Homework 2 due. [Instructions and submission link here.](https://classroom.github.com/a/VrRecub6) 
+    - [Slides](https://github.com/mariamontoyaa/2023-intro-to-R-public/blob/2ecbd8064296e5b9d9551bccd7fc2b3cacce768d/slides/03_reports-Rmd-Latex.html)
+    - Homework 2 due. Instructions and submission link [here](https://classroom.github.com/a/VrRecub6). [**Homework answers**](https://github.com/mariamontoyaa/2023-intro-to-R-public/blob/2ecbd8064296e5b9d9551bccd7fc2b3cacce768d/code/hw02_playfair-wheat-wages.R)
 5. Econometrics in R (Sep 22) 
 
 ## Do you have a question, you can't access the material or your code doesn't run?
