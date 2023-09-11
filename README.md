@@ -3,6 +3,8 @@ This is a course for the Analysis and Policy and Economics M1 program at the Par
 
 The objective of this course is to provide you with the necessary bases in R programming to be able to carry out your empirical homework and research projects in the program. The course is structured in 4 classes of 2 hours. No preliminary knowledge of programming is required, but part of the content of the last lecture is based on what you're going to see in Econometrics I. Lectures will take place in the **computer room R2-07 at Campus Jourdan**. Feel free to bring your own laptop, especially if you're not used to the 🇫🇷🇧🇪AZERTY keyboard. 
 
+This course is mostly based on [Louis Sirugue Intro to Programming in R course](https://louissirugue.github.io/intro_to_R/home.html) at PSE and the [Development Research in Practice Handbook](https://worldbank.github.io/dime-data-handbook/) and [RA onboarding trainings](https://osf.io/wzjtk/) by DIME Analytics. See the resources slides at the end of each lecture for specific references on each topic. 
+
 ## Before the first class:
 - [ ] 💻 Install R and R Studio.
 - [ ] 🐈‍⬛ Create a GitHub account
