@@ -1,0 +1,2764 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Econometrics in R</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Intro to R course" />
+    <script src="04_econometrics_files/header-attrs-2.24/header-attrs.js"></script>
+    <link href="04_econometrics_files/countdown-0.4.0/countdown.css" rel="stylesheet" />
+    <script src="04_econometrics_files/countdown-0.4.0/countdown.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+&lt;style type="text/css"&gt;
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue:wght@400;700&amp;display=swap');
+pre {
+    display: block;
+    font-family: monospace;
+    white-space: pre;
+    margin: 1em 0px;
+    margin-top: 0em;
+    margin-right: 0px;
+    margin-bottom: 0em;
+    margin-left: 0px;
+    white-space: pre-wrap;
+}
+
+p {
+    line-height: 22px;
+}
+
+h1{
+  margin-bottom: -20px;
+}
+
+h2{
+  margin-bottom: -11px;
+}
+
+h3{
+  margin-bottom: -10px;
+}
+
+.emphasized {
+   font-size: 1.2em;
+   font-family: Nunito;
+}
+
+.greenemph {
+   font-size: 1.2em;
+   font-family: Nunito;
+   color: #69995D
+}
+
+.greenhead {
+   font-size: 35px;
+   font-family: Nunito;
+   color: #69995D
+}
+
+.nunito {
+   font-size: 25px;
+   font-family: Nunito;
+}
+
+.nunitosm {
+   font-family: Nunito;
+}
+.nunitosmgrey {
+   font-family: Nunito;
+   color: #E8E9E8
+}
+
+.invisible {
+   color: white;
+}
+
+.remark-code {
+background: #green;
+}
+
+&lt;/style&gt;
+
+
+
+
+
+
+
+
+
+
+
+&lt;br&gt;
+&lt;br&gt; 
+&lt;br&gt; 
+&lt;br&gt; 
+&lt;br&gt; 
+&lt;br&gt; 
+&lt;br&gt; 
+.center[
+# ECONOMETRICS IN R
+.nunito[LECTURE 4]
+.greenhead[INTRO TO R PROGRAMMING]
+
+**MARIA MONTOYA-AGUIRRE**
+
+M1 APE @ PARIS SCHOOL OF ECONOMICS
+]
+
+
+---
+
+## REVIEW
+
+
+---
+
+# AGENDA
+.nunitosm[
+
+.pull-left[
+.nunitosmgrey[]
+- REGRESSIONS IN R
+  - CONTINUOUS VARIABLES
+  - CATEGORICAL AND BINARY VARIABLES
+
+- GETTING TO THE RIGHT MODEL
+  - VARIABLE TRANSFORMATION
+  - FUNCTIONAL FORM
+  - CONTROL VARIABLES
+  - INTERACTION TERMS
+
+
+]
+
+.pull-right[
+
+- INFERENCE
+
+
+- EXPORTING RESULTS
+  - REGRESSION TABLES
+  - COEFFICIENT PLOTS
+
+- PRACTICING YOUR SKILLS
+]
+ ]
+
+
+
+---
+### REGRESSIONS
+We are going to work with a portion of the US Current Population Survey for August 2023. Download it from [here](https://github.com/mariamontoyaa/2023-intro-to-R-public/blob/main/data/04_202308_cps.csv). We are going to explore some well-known relationships in **labor economics**. 
+
+
+```r
+cps &lt;- read.csv("../data/04_202308_cps.csv") 
+cps10 &lt;- read.csv("../data/04_202308_cps10.csv") 
+str(cps)  
+```
+
+```
+## 'data.frame':	4609 obs. of  13 variables:
+##  $ X       : int  1 2 3 4 5 6 7 8 9 10 ...
+##  $ region  : int  3 3 3 3 3 3 3 3 3 1 ...
+##  $ state   : int  1 1 1 1 1 1 1 1 1 9 ...
+##  $ age     : int  22 50 55 52 59 57 22 38 24 16 ...
+##  $ sex     : chr  "Male" "Female" "Male" "Male" ...
+##  $ maritl  : int  6 1 5 5 1 1 6 1 6 6 ...
+##  $ educ    : chr  "High school" "Bachelor's degree" "No high school" "High school" ...
+##  $ race    : int  1 1 1 1 1 1 1 2 2 1 ...
+##  $ status  : int  1 1 2 1 1 1 1 1 1 1 ...
+##  $ work    : int  1 1 2 1 1 1 1 1 1 1 ...
+##  $ hours   : int  40 30 40 40 40 40 20 30 40 12 ...
+##  $ hourrt  : num  14 42 20 27.6 40 ...
+##  $ earnings: num  560 1260 800 1103 1600 ...
+```
+
+
+---
+### REGRESSIONS
+
+
+Let's take a look at the relation between hours worked and earnings (measured for a weekly period). &lt;br&gt; &lt;br&gt;
+.center[.nunito[How can we best summarize this relationship?]]
+&lt;br&gt;
+
+&lt;img src="04_econometrics_files/figure-html/unnamed-chunk-7-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+### REGRESSIONS
+You are already familiar with **univariate regressions** `\(y = \alpha + \beta x + \epsilon\)`.
+- We are looking for the line `\(\hat y_i = \hat \alpha + \hat \beta x_i\)` that **minimizes the distance** to the data points 
+
+&lt;img src="04_econometrics_files/figure-html/unnamed-chunk-8-1.png" style="display: block; margin: auto;" /&gt;
+
+
+---
+### REGRESSIONS
+You are already familiar with **univariate regressions** `\(y = \alpha + \beta x + \epsilon\)`.
+- We are looking foor the line `\(\hat y_i = \hat \alpha + \hat \beta x_i\)` that **minimizes the distance** to the data points 
+&lt;br&gt;
+&lt;img src="04_econometrics_files/figure-html/unnamed-chunk-9-1.png" style="display: block; margin: auto;" /&gt;
+
+
+---
+### REGRESSIONS
+You are already familiar with **univariate regressions** `\(y = \alpha + \beta x + \epsilon\)`.
+- We are looking foor the line `\(\hat y_i = \hat \alpha + \hat \beta x_i\)` that **minimizes the distance** to the data points: `\(\sum \epsilon_i^2\)`
+&lt;br&gt;
+&lt;img src="04_econometrics_files/figure-html/unnamed-chunk-10-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+### REGRESSIONS
+You are already familiar with **univariate regressions** `\(y = \alpha + \beta x + \epsilon\)`.
+- We are looking for the line `\(\hat y_i = \hat \alpha + \hat \beta x_i\)` that **minimizes the distance** to the data points: `\(\sum \epsilon_i^2\)`
+ - Such that for a **one unit increase** in `\(x\)`, &lt;br&gt;
+&lt;img src="04_econometrics_files/figure-html/unnamed-chunk-11-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+### REGRESSIONS
+You are already familiar with **univariate regressions** `\(y = \alpha + \beta x + \epsilon\)`.
+- We are looking for the line `\(\hat y_i = \hat \alpha + \hat \beta x_i\)` that **minimizes the distance** to the data points: `\(\sum \epsilon_i^2\)`
+ - Such that for a **one unit increase** in `\(x\)`, `\(\hat \beta\)` indicates the associated **expected change** in `\(y\)` &lt;br&gt;
+&lt;img src="04_econometrics_files/figure-html/unnamed-chunk-12-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+### REGRESSIONS
+In R we can estimate a regression model using the `lm()` command (**L**inear **M**odel), which takes the arguments:
+- Formula. Written as `y ~ x`
+- Data
+
+```r
+lm(earnings ~ hours, cps)
+```
+
+```
+## 
+## Call:
+## lm(formula = earnings ~ hours, data = cps)
+## 
+## Coefficients:
+## (Intercept)        hours  
+##     -198.81        28.91
+```
+
+---
+### REGRESSIONS
+- To get a more complete description of our regression, we use `summary()` on the regression object
+
+```r
+mod &lt;- lm(earnings ~ hours, cps)
+summary(mod)
+```
+
+```
+## 
+## Call:
+## lm(formula = earnings ~ hours, data = cps)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -2066.65  -237.53   -86.26   121.36  2882.47 
+## 
+## Coefficients:
+##              Estimate Std. Error t value            Pr(&gt;|t|)    
+## (Intercept) -198.8092    21.9152  -9.072 &lt;0.0000000000000002 ***
+## hours         28.9085     0.5911  48.904 &lt;0.0000000000000002 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 393.3 on 4607 degrees of freedom
+## Multiple R-squared:  0.3417,	Adjusted R-squared:  0.3416 
+## F-statistic:  2392 on 1 and 4607 DF,  p-value: &lt; 0.00000000000000022
+```
+
+
+---
+### REGRESSIONS
+- We get the **command** we used, including the **formula**
+
+```r
+mod &lt;- lm(earnings ~ hours, cps)
+summary(mod)
+```
+
+```
+## 
+## Call:
+## lm(formula = earnings ~ hours, data = cps)
+....
+```
+---
+### REGRESSIONS
+- A description of the **distribution of residuals**
+
+
+```r
+mod &lt;- lm(earnings ~ hours, cps)
+summary(mod)
+```
+
+```
+## 
+## Call:
+## lm(formula = earnings ~ hours, data = cps)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -2066.65  -237.53   -86.26   121.36  2882.47 
+....
+```
+
+---
+### REGRESSIONS
+- **Coefficients** and their **standard error, t-value**, and **p-value**
+
+```r
+mod &lt;- lm(earnings ~ hours, cps)
+summary(mod)
+```
+
+```
+## 
+## Call:
+## lm(formula = earnings ~ hours, data = cps)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -2066.65  -237.53   -86.26   121.36  2882.47 
+## 
+## Coefficients:
+##              Estimate Std. Error t value            Pr(&gt;|t|)    
+## (Intercept) -198.8092    21.9152  -9.072 &lt;0.0000000000000002 ***
+## hours         28.9085     0.5911  48.904 &lt;0.0000000000000002 ***
+....
+```
+---
+### REGRESSIONS
+- **Significance thresholds** and their symbols
+
+```r
+mod &lt;- lm(earnings ~ hours, cps)
+summary(mod)
+```
+
+```
+## 
+## Call:
+## lm(formula = earnings ~ hours, data = cps)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -2066.65  -237.53   -86.26   121.36  2882.47 
+## 
+## Coefficients:
+##              Estimate Std. Error t value            Pr(&gt;|t|)    
+## (Intercept) -198.8092    21.9152  -9.072 &lt;0.0000000000000002 ***
+## hours         28.9085     0.5911  48.904 &lt;0.0000000000000002 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+....
+```
+---
+### REGRESSIONS
+- The **residual standard error** `\(\sqrt{\sum(y_i-\hat y_i)^2/\text{df}}\)` and their symbols
+
+
+```r
+mod &lt;- lm(earnings ~ hours, cps)
+summary(mod)
+```
+
+```
+## 
+## Call:
+## lm(formula = earnings ~ hours, data = cps)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -2066.65  -237.53   -86.26   121.36  2882.47 
+## 
+## Coefficients:
+##              Estimate Std. Error t value            Pr(&gt;|t|)    
+## (Intercept) -198.8092    21.9152  -9.072 &lt;0.0000000000000002 ***
+## hours         28.9085     0.5911  48.904 &lt;0.0000000000000002 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 393.3 on 4607 degrees of freedom
+....
+```
+---
+### REGRESSIONS
+- The `\(R^2\)` and **adjusted** `\(R^2\)`
+
+```r
+mod &lt;- lm(earnings ~ hours, cps)
+summary(mod)
+```
+
+```
+## 
+## Call:
+## lm(formula = earnings ~ hours, data = cps)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -2066.65  -237.53   -86.26   121.36  2882.47 
+## 
+## Coefficients:
+##              Estimate Std. Error t value            Pr(&gt;|t|)    
+## (Intercept) -198.8092    21.9152  -9.072 &lt;0.0000000000000002 ***
+## hours         28.9085     0.5911  48.904 &lt;0.0000000000000002 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 393.3 on 4607 degrees of freedom
+## Multiple R-squared:  0.3417,	Adjusted R-squared:  0.3416 
+....
+```
+
+---
+### REGRESSION RESULTS
+- The results of an **F-test** ( `\(H_0 : \beta_k = 0 \forall k\)` )
+
+```r
+mod &lt;- lm(earnings ~ hours, cps)
+summary(mod)
+```
+.left-column[
+.nunito[.right[
+&lt;br&gt;
+&lt;br&gt;
+Formula
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+Residuals distribution
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+Coefficients
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+Significance levels
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+Residual std. error &lt;br&gt;
+`\(R^2\)` &lt;br&gt;
+F-test
+]
+]
+]
+.right-column[
+
+```
+## 
+## Call:
+## lm(formula = earnings ~ hours, data = cps)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -2066.65  -237.53   -86.26   121.36  2882.47 
+## 
+## Coefficients:
+##              Estimate Std. Error t value            Pr(&gt;|t|)    
+## (Intercept) -198.8092    21.9152  -9.072 &lt;0.0000000000000002 ***
+## hours         28.9085     0.5911  48.904 &lt;0.0000000000000002 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 393.3 on 4607 degrees of freedom
+## Multiple R-squared:  0.3417,	Adjusted R-squared:  0.3416 
+## F-statistic:  2392 on 1 and 4607 DF,  p-value: &lt; 0.00000000000000022
+....
+```
+]
+---
+### REGRESSION RESULTS
+All these elements are easily accessible using the `$` operator. You can find the definition of most elements in the **Value** section of the summary function documentation `?summary.lm()`
+  - Remember that functions take objects as arguments and produce new objects. **Value** describes the object that is created by a function. 
+
+```r
+sum_mod &lt;- summary(mod)
+str(sum_mod, give.attr = F)
+```
+
+```
+## List of 11
+##  $ call         : language lm(formula = earnings ~ hours, data = cps)
+##  $ terms        :Classes 'terms', 'formula'  language earnings ~ hours
+##  $ residuals    : Named num [1:4609] -398 592 -158 146 642 ...
+##  $ coefficients : num [1:2, 1:4] -198.809 28.908 21.915 0.591 -9.072 ...
+##  $ aliased      : Named logi [1:2] FALSE FALSE
+##  $ sigma        : num 393
+##  $ df           : int [1:3] 2 4607 2
+##  $ r.squared    : num 0.342
+##  $ adj.r.squared: num 0.342
+##  $ fstatistic   : Named num [1:3] 2392 1 4607
+##  $ cov.unscaled : num [1:2, 1:2] 0.00310512 -0.00008078 -0.00008078 0.00000226
+```
+
+
+
+---
+### REGRESSION RESULTS
+Taking the **coefficients**:
+
+```r
+sum_mod$coefficients
+```
+
+```
+##               Estimate Std. Error   t value                    Pr(&gt;|t|)
+## (Intercept) -198.80923 21.9152104 -9.071746 0.0000000000000000001699063
+## hours         28.90846  0.5911213 48.904453 0.0000000000000000000000000
+```
+We can **subset** this matrix like we would do with a regular `data.frame`:
+
+```r
+sum_mod$coefficients[2,1]
+```
+
+```
+## [1] 28.90846
+```
+
+```r
+sum_mod$coefficients[,"Std. Error"]
+```
+
+```
+## (Intercept)       hours 
+##  21.9152104   0.5911213
+```
+We can use this to compute the fitted values `\(\hat y = \alpha + \beta x\)` 
+
+```r
+alpha &lt;- sum_mod$coefficients[1,1]
+beta  &lt;- sum_mod$coefficients[2,1] 
+
+cps$hat_earnings &lt;- alpha + (beta * cps$hours)
+```
+
+---
+### REGRESSION RESULTS
+We can easily **plot** the **distribution** of our **residuals**
+
+```r
+data.frame(res = sum_mod$residuals) %&gt;%    # Convert the residuals to a data frame
+  ggplot(aes(x = res)) +
+  geom_density() +
+  geom_vline(xintercept = 0, linetype = "dashed")
+```
+&lt;img src="04_econometrics_files/figure-html/unnamed-chunk-30-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+### REGRESSION RESULTS
+- `ggplot()` has a dedicated **geometry for fitted values** `geom_smooth()`
+
+```r
+cps %&gt;% 
+  ggplot(aes(x = hours, y = earnings)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+```
+
+&lt;img src="04_econometrics_files/figure-html/unnamed-chunk-32-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+class: inverse
+
+### PRACTICE
+.nunito[Check that `lm()` works fine by computing a regression manually for the model:]
+`$$y = \alpha + \beta x$$` where `\(y\)` is earnings and `\(x\)` is hours worked. 
+1. Start by creating a variable for `\(\hat\beta\)`, then for `\(\hat\alpha\)`, `\(\hat y_i\)` and `\(\hat \varepsilon_i\)`
+$$\hat\beta = \frac{Cov(x,y)}{Var(x)} ; \quad \hat \alpha = \bar y - \hat \beta \times \bar x $$
+You will need the `cov()`and `var()` functions  
+
+  **Review: where do these formulas come from?** `\(E(u) = 0; \quad E(u|x) = 0\)`
+
+2. Summarise the data to only display `\(\alpha\)`, `\(\hat\beta\)` and the `\(R^2\)` 
+$$R^2 = 1 - \frac{\sum(y_i - \hat y_i)^2}{\sum(y_i - \bar y_i)^2} $$
+
+<div class="countdown" id="timer_effa5c2c" data-update-every="1" tabindex="0" style="right:0;bottom:0;">
+<div class="countdown-controls"><button class="countdown-bump-down">&minus;</button><button class="countdown-bump-up">&plus;</button></div>
+<code class="countdown-time"><span class="countdown-digits minutes">10</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
+</div>
+
+---
+
+### PRACTICE
+1. Start by creating a variable for `\(\hat\beta\)`, then for `\(\hat\alpha\)`, `\(\hat y_i\)` and `\(\hat \varepsilon_i\)`
+$$\hat\beta = \frac{Cov(x,y)}{Var(x)} ; \quad \hat \alpha = \bar y - \hat \beta \times \bar x $$
+
+```r
+cps 
+#
+#
+#
+#
+```
+
+```
+##      hours earnings
+## 1       40   560.00
+## 2       30  1260.00
+## 3       40   800.00
+## 4       40  1103.20
+## 5       40  1600.00
+## 6       40   840.00
+## 7       20   280.00
+## 8       30    30.00
+## 9       40   400.00
+....
+```
+
+---
+
+### PRACTICE
+1. Start by creating a variable for `\(\hat\beta\)`, then for `\(\hat\alpha\)`, `\(\hat y_i\)` and `\(\hat \varepsilon_i\)`
+$$\hat\beta = \frac{Cov(x,y)}{Var(x)} ; \quad \hat \alpha = \bar y - \hat \beta \times \bar x $$
+
+```r
+cps %&gt;% 
+  mutate(beta = cov(hours, earnings) / var(hours))
+#
+#
+#
+```
+
+```
+##      hours earnings     beta
+## 1       40   560.00 28.90846
+## 2       30  1260.00 28.90846
+## 3       40   800.00 28.90846
+## 4       40  1103.20 28.90846
+## 5       40  1600.00 28.90846
+## 6       40   840.00 28.90846
+## 7       20   280.00 28.90846
+## 8       30    30.00 28.90846
+## 9       40   400.00 28.90846
+....
+```
+
+---
+
+### PRACTICE
+1. Start by creating a variable for `\(\hat\beta\)`, then for `\(\hat\alpha\)`, `\(\hat y_i\)` and `\(\hat \varepsilon_i\)`
+$$\hat\beta = \frac{Cov(x,y)}{Var(x)} ; \quad \hat \alpha = \bar y - \hat \beta \times \bar x $$
+
+```r
+cps %&gt;% 
+  mutate(beta = cov(hours, earnings) / var(hours),
+         alpha = mean(earnings) - beta * mean(hours))
+#
+#
+```
+
+```
+##      hours earnings     beta     alpha
+## 1       40   560.00 28.90846 -198.8092
+## 2       30  1260.00 28.90846 -198.8092
+## 3       40   800.00 28.90846 -198.8092
+## 4       40  1103.20 28.90846 -198.8092
+## 5       40  1600.00 28.90846 -198.8092
+## 6       40   840.00 28.90846 -198.8092
+## 7       20   280.00 28.90846 -198.8092
+## 8       30    30.00 28.90846 -198.8092
+## 9       40   400.00 28.90846 -198.8092
+....
+```
+
+---
+
+### PRACTICE
+1. Start by creating a variable for `\(\hat\beta\)`, then for `\(\hat\alpha\)`, `\(\hat y_i\)` and `\(\hat \varepsilon_i\)`
+$$\hat\beta = \frac{Cov(x,y)}{Var(x)} ; \quad \hat \alpha = \bar y - \hat \beta \times \bar x $$
+
+```r
+cps %&gt;% 
+  mutate(beta = cov(hours, earnings) / var(hours),
+         alpha = mean(earnings) - beta * mean(hours),
+         y_hat = alpha + beta * hours)
+#
+```
+
+```
+##      hours earnings     beta     alpha       y_hat
+## 1       40   560.00 28.90846 -198.8092  957.529242
+## 2       30  1260.00 28.90846 -198.8092  668.444625
+## 3       40   800.00 28.90846 -198.8092  957.529242
+## 4       40  1103.20 28.90846 -198.8092  957.529242
+## 5       40  1600.00 28.90846 -198.8092  957.529242
+## 6       40   840.00 28.90846 -198.8092  957.529242
+## 7       20   280.00 28.90846 -198.8092  379.360008
+## 8       30    30.00 28.90846 -198.8092  668.444625
+## 9       40   400.00 28.90846 -198.8092  957.529242
+....
+```
+
+---
+### PRACTICE
+1. Start by creating a variable for `\(\hat\beta\)`, then for `\(\hat\alpha\)`, `\(\hat y_i\)` and `\(\hat \varepsilon_i\)`
+$$\hat\beta = \frac{Cov(x,y)}{Var(x)} ; \quad \hat \alpha = \bar y - \hat \beta \times \bar x $$
+
+```r
+cps %&gt;% 
+  mutate(beta = cov(hours, earnings) / var(hours),
+         alpha = mean(earnings) - beta * mean(hours),
+         y_hat = alpha + beta * hours,
+         res = earnings - y_hat) 
+```
+
+```
+##      hours earnings     beta     alpha       y_hat           res
+## 1       40   560.00 28.90846 -198.8092  957.529242  -397.5292415
+## 2       30  1260.00 28.90846 -198.8092  668.444625   591.5553752
+## 3       40   800.00 28.90846 -198.8092  957.529242  -157.5292415
+## 4       40  1103.20 28.90846 -198.8092  957.529242   145.6707585
+## 5       40  1600.00 28.90846 -198.8092  957.529242   642.4707585
+## 6       40   840.00 28.90846 -198.8092  957.529242  -117.5292415
+## 7       20   280.00 28.90846 -198.8092  379.360008   -99.3600080
+## 8       30    30.00 28.90846 -198.8092  668.444625  -638.4446248
+## 9       40   400.00 28.90846 -198.8092  957.529242  -557.5292415
+....
+```
+
+---
+### PRACTICE
+ 2. Summarise the data to only display `\(\alpha\)`, `\(\hat\beta\)` and the 
+`\(R^2 = 1 - \frac{\sum(y_i - \hat y_i)^2}{\sum(y_i - \bar y_i)^2}\)`
+
+
+```r
+cps %&gt;% 
+  mutate(beta = cov(hours, earnings) / var(hours),
+         alpha = mean(earnings) - beta * mean(hours),
+         y_hat = alpha + beta * hours,
+         res = earnings - y_hat) %&gt;% 
+  summarise(alpha = first(alpha),
+            beta = first(beta),
+            r2 = 1 - sum(res^2) / sum((earnings - mean(earnings))^2))
+```
+
+```
+##       alpha     beta        r2
+## 1 -198.8092 28.90846 0.3417298
+```
+--
+
+```r
+sum_mod$coefficients[,"Estimate"]
+```
+
+```
+## (Intercept)       hours 
+##  -198.80923    28.90846
+```
+--
+
+```r
+sum_mod$r.squared
+```
+
+```
+## [1] 0.3417298
+```
+
+---
+### USING BINARY AND CATEGORICAL VARIABLES
+- We want to know the **relationship** between people's **sex** and **earnings**
+
+```r
+cps$sex
+```
+
+```
+##    [1] "Male"   "Female" "Male"   "Male"   "Male"   "Female" "Male"   "Male"  
+##    [9] "Male"   "Female" "Female" "Male"   "Female" "Female" "Female" "Male"  
+##   [17] "Female" "Female" "Female" "Female" "Female" "Female" "Female" "Female"
+....
+```
+**Can we just regress earnings on sex even though it's a character variable?** 
+
+```r
+lm(earnings ~ sex, data = cps)
+```
+
+```
+## 
+## Call:
+## lm(formula = earnings ~ sex, data = cps)
+## 
+## Coefficients:
+## (Intercept)      sexMale  
+##       746.3        179.3
+```
+
+
+---
+### USING BINARY AND CATEGORICAL VARIABLES
+What is going on? 
+- R implicitely **converts** character variables into **binary** variables 
+&lt;img src="04_econometrics_files/figure-html/unnamed-chunk-48-1.png" style="display: block; margin: auto;" /&gt;
+---
+### USING BINARY AND CATEGORICAL VARIABLES
+What is going on? 
+- ... to ressemble the **continuous** case, such that we're looking at a **1-unit increase** in `\(x\)`
+&lt;img src="04_econometrics_files/figure-html/unnamed-chunk-49-1.png" style="display: block; margin: auto;" /&gt;
+---
+### USING BINARY AND CATEGORICAL VARIABLES
+What is going on? 
+- ... to ressemble the **continuous** case, such that we're looking at a **1-unit increase** in `\(x\)`
+&lt;img src="04_econometrics_files/figure-html/unnamed-chunk-50-1.png" style="display: block; margin: auto;" /&gt;
+---
+### USING BINARY AND CATEGORICAL VARIABLES
+What is going on? 
+- Also, the **fit** is necessarily going through the **mean of each category**
+&lt;img src="04_econometrics_files/figure-html/unnamed-chunk-51-1.png" style="display: block; margin: auto;" /&gt;
+---
+### USING BINARY AND CATEGORICAL VARIABLES
+What is going on? 
+- Such that `\(\hat\alpha\)` is the **mean of the reference group** 
+&lt;img src="04_econometrics_files/figure-html/unnamed-chunk-52-1.png" style="display: block; margin: auto;" /&gt;
+---
+### USING BINARY AND CATEGORICAL VARIABLES
+What is going on? 
+- And `\(\hat\beta\)` is the **difference in means**
+&lt;img src="04_econometrics_files/figure-html/unnamed-chunk-53-1.png" style="display: block; margin: auto;" /&gt;
+---
+
+### USING BINARY AND CATEGORICAL VARIABLES
+We can verify this easily:
+.pull-left[
+
+```r
+cps %&gt;% 
+  group_by(sex) %&gt;% 
+  summarise(y_bar = mean(earnings)) %&gt;% 
+  mutate(dif = y_bar - y_bar[1])
+```
+
+```
+## # A tibble: 2 × 3
+##   sex    y_bar   dif
+##   &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt;
+## 1 Female  746.    0 
+## 2 Male    926.  179.
+```
+
+]
+
+.pull-right[
+
+```r
+lm(earnings ~ sex, data = cps)
+```
+
+```
+## 
+## Call:
+## lm(formula = earnings ~ sex, data = cps)
+## 
+## Coefficients:
+## (Intercept)      sexMale  
+##       746.3        179.3
+```
+]
+
+---
+### USING BINARY AND CATEGORICAL VARIABLES
+Let's complicate it by using categorical variables with more than two values. Let's see how **education** relates to **earnings**
+
+```r
+unique(cps$educ)
+```
+
+```
+## [1] "High school"       "Bachelor's degree" "No high school"   
+## [4] "Associate degree"
+```
+
+Before, a **2-category** variables was equivalent to 1 **dummy variable**. &lt;br&gt;
+now an **n-category** variable is equivalent to **n-1** **dummy variables**
+.pull-left[
+
+|sex    | male|
+|:------|----:|
+|Female |    0|
+|Female |    0|
+|Female |    0|
+|Male   |    1|
+|Male   |    1|
+|Male   |    1|
+]
+
+.pull-right[
+
+|educ              | Bachelor's degree| High school| No high school|
+|:-----------------|-----------------:|-----------:|--------------:|
+|High school       |                 0|           1|              0|
+|Bachelor's degree |                 1|           0|              0|
+|No high school    |                 0|           0|              1|
+|Associate degree  |                 0|           0|              0|
+]
+---
+### USING BINARY AND CATEGORICAL VARIABLES
+
+Once again the **constant** is the average `\(y\)` for the reference category and the **slopes** are the relative **differences in means**
+
+
+
+```r
+lm(earnings ~ educ, data = cps) 
+```
+
+```
+##                       Estimate Std. Error t value Pr(&gt;|t|)
+## (Intercept)             904.01      19.47   46.43        0
+## educBachelor's degree   106.06      24.65    4.30        0
+## educHigh school         -97.30      21.58   -4.51        0
+## educNo high school     -328.85      28.19  -11.67        0
+```
+.pull-left[
+
+```r
+cps %&gt;% 
+  group_by(educ) %&gt;% 
+  summarise(y_bar = mean(earnings)) %&gt;% 
+  mutate(dif = y_bar - y_bar[1])
+```
+
+```
+## # A tibble: 4 × 3
+##   educ              y_bar    dif
+##   &lt;chr&gt;             &lt;dbl&gt;  &lt;dbl&gt;
+## 1 Associate degree   904.    0  
+## 2 Bachelor's degree 1010.  106. 
+## 3 High school        807.  -97.3
+## 4 No high school     575. -329.
+```
+]
+
+.pull-right[
+Note that R always sort **character** variables by **alphabetical order** 
+- Does it make sense that our **reference category** is "Associate's degree" ?
+
+- We'd prefer to have "No high school" (the least education) as the **reference category**
+]
+
+
+---
+ 
+
+
+
+---
+### USING BINARY AND CATEGORICAL VARIABLES
+We need to talk about .nunito[factor variables] (another **class** of R objects)
+- Variables whose values **indicate** different groups
+- They take different values that are **arbitrary group classifiers** 
+
+```
+## [1] 1
+## Levels: 1 2 3 4 5
+```
+- R understands that the different values **do not mean anything** they are there to differentiate groups only
+
+```r
+states * 2
+```
+
+```
+## [1] NA NA NA NA NA
+```
+- We can specify the **levels** and **labels** that they take:
+
+```r
+x &lt;- c("Man", "Male", "Man", "Lady", "Female")
+## Map from 4 different values to only two levels:
+xf &lt;- factor(x, levels = c("Male", "Man" , "Lady",   "Female"),
+                labels = c("Male", "Male", "Female", "Female"))
+xf
+```
+
+```
+## [1] Male   Male   Male   Female Female
+## Levels: Male Female
+```
+---
+### USING BINARY AND CATEGORICAL VARIABLES
+Going back to our education variable, we want to **order it** in a way that makes sense: 
+
+
+
+```r
+levels(as.factor(cps$educ)) # Default order is alphabetical
+```
+
+```
+## [1] "Associate degree"  "Bachelor's degree" "High school"      
+## [4] "No high school"
+```
+--
+Let's create a **factor variable** with the right order using `factor()` 
+
+
+```r
+cps &lt;-
+  cps %&gt;% 
+  mutate(educf = factor(educ, levels = c("No high school", "High school",
+                                         "Associate degree", "Bachelor's degree")))
+levels(cps$educf)
+```
+
+```
+## [1] "No high school"    "High school"       "Associate degree" 
+## [4] "Bachelor's degree"
+```
+--
+Or **only** change the reference category (first level), using `relevel()` 
+
+```r
+cps &lt;-
+  cps %&gt;% 
+  mutate(educf = relevel(as.factor(educ), ref = "No high school"))
+
+levels(cps$educf)
+```
+
+```
+## [1] "No high school"    "Associate degree"  "Bachelor's degree"
+## [4] "High school"
+```
+---
+### USING BINARY AND CATEGORICAL VARIABLES
+
+```r
+lm(earnings ~ educf, data = cps)
+```
+
+```
+## 
+## Call:
+## lm(formula = earnings ~ educf, data = cps)
+## 
+## Coefficients:
+##            (Intercept)   educfAssociate degree  educfBachelor's degree  
+##                  575.2                   328.8                   434.9  
+##       educfHigh school  
+##                  231.5
+```
+We can also modify our `educ` variable directly in the regression call: 
+
+```r
+lm(earnings ~ relevel(as.factor(educ), ref = "No high school"), data = cps)
+```
+or 
+
+```r
+lm(earnings ~ factor(educ, levels = c("No high school", "High school", 
+                                      "Associate degree", "Bachelor's degree")),
+   data = cps)
+```
+---
+class: inverse
+### PRACTICE
+1. Load the Current Population Survey data `cps,csv` in case you haven't 
+
+2. Regress the earnings on the age variable
+
+3. Redo the same regression afer converting the age variable as a **factor** 
+
+
+<div class="countdown" id="timer_d32e205a" data-update-every="1" tabindex="0" style="right:0;bottom:0;">
+<div class="countdown-controls"><button class="countdown-bump-down">&minus;</button><button class="countdown-bump-up">&plus;</button></div>
+<code class="countdown-time"><span class="countdown-digits minutes">04</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
+</div>
+---
+class: inverse
+### PRACTICE
+.pull-left[
+
+```r
+lm(earnings ~ age, data = cps) %&gt;% 
+  summary()
+```
+
+```
+## 
+## Call:
+## lm(formula = earnings ~ age, data = cps)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -966.33 -308.32  -75.55  207.35 3012.86 
+## 
+## Coefficients:
+##             Estimate Std. Error t value            Pr(&gt;|t|)    
+## (Intercept) 617.8860    19.1940   32.19 &lt;0.0000000000000002 ***
+## age           5.5067     0.4534   12.15 &lt;0.0000000000000002 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 477.2 on 4607 degrees of freedom
+## Multiple R-squared:  0.03103,	Adjusted R-squared:  0.03082 
+## F-statistic: 147.5 on 1 and 4607 DF,  p-value: &lt; 0.00000000000000022
+```
+]
+
+.pull-right[
+
+```r
+lm(earnings ~ as.factor(age), data = cps) %&gt;% 
+  summary()
+```
+
+```
+## 
+## Call:
+## lm(formula = earnings ~ as.factor(age), data = cps)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -995.53 -283.21  -75.23  191.46 2852.56 
+## 
+## Coefficients:
+##                  Estimate Std. Error t value     Pr(&gt;|t|)    
+## (Intercept)       294.167    117.202   2.510     0.012111 *  
+## as.factor(age)16   -9.190    128.533  -0.072     0.943002    
+## as.factor(age)17    7.128    126.798   0.056     0.955174    
+## as.factor(age)18  174.198    126.695   1.375     0.169217    
+## as.factor(age)19  231.065    124.804   1.851     0.064174 .  
+## as.factor(age)20  252.162    124.312   2.028     0.042572 *  
+## as.factor(age)21  336.297    124.312   2.705     0.006850 ** 
+## as.factor(age)22  424.540    123.408   3.440     0.000587 ***
+## as.factor(age)23  430.756    124.429   3.462     0.000541 ***
+## as.factor(age)24  460.153    124.089   3.708     0.000211 ***
+## as.factor(age)25  477.875    123.731   3.862     0.000114 ***
+## as.factor(age)26  497.807    125.370   3.971 0.0000727680 ***
+## as.factor(age)27  613.167    124.199   4.937 0.0000008218 ***
+## as.factor(age)28  589.024    125.447   4.695 0.0000027390 ***
+## as.factor(age)29  607.338    126.494   4.801 0.0000016268 ***
+## as.factor(age)30  565.818    125.686   4.502 0.0000069048 ***
+## as.factor(age)31  552.740    127.013   4.352 0.0000137965 ***
+## as.factor(age)32  617.707    125.525   4.921 0.0000008915 ***
+## as.factor(age)33  628.355    125.939   4.989 0.0000006284 ***
+## as.factor(age)34  581.412    125.686   4.626 0.0000038329 ***
+## as.factor(age)35  661.732    126.301   5.239 0.0000001685 ***
+## as.factor(age)36  681.187    126.116   5.401 0.0000000696 ***
+## as.factor(age)37  594.376    125.370   4.741 0.0000021920 ***
+## as.factor(age)38  707.770    128.111   5.525 0.0000000349 ***
+## as.factor(age)39  716.580    126.593   5.661 0.0000000160 ***
+## as.factor(age)40  679.705    126.301   5.382 0.0000000775 ***
+## as.factor(age)41  629.048    129.151   4.871 0.0000011501 ***
+## as.factor(age)42  601.796    126.593   4.754 0.0000020582 ***
+## as.factor(age)43  716.863    127.237   5.634 0.0000000187 ***
+## as.factor(age)44  647.484    128.248   5.049 0.0000004622 ***
+## as.factor(age)45  653.271    130.024   5.024 0.0000005249 ***
+## as.factor(age)46  703.181    128.834   5.458 0.0000000507 ***
+## as.factor(age)47  680.468    130.215   5.226 0.0000001812 ***
+## as.factor(age)48  736.510    129.151   5.703 0.0000000125 ***
+## as.factor(age)49  597.502    128.682   4.643 0.0000035263 ***
+## as.factor(age)50  680.229    128.111   5.310 0.0000001150 ***
+## as.factor(age)51  676.693    128.533   5.265 0.0000001469 ***
+## as.factor(age)52  637.339    127.353   5.004 0.0000005812 ***
+## as.factor(age)53  612.455    128.834   4.754 0.0000020576 ***
+## as.factor(age)54  694.483    127.237   5.458 0.0000000507 ***
+## as.factor(age)55  629.914    128.834   4.889 0.0000010466 ***
+## as.factor(age)56  695.063    126.798   5.482 0.0000000444 ***
+## as.factor(age)57  655.734    129.485   5.064 0.0000004265 ***
+## as.factor(age)58  718.592    127.594   5.632 0.0000000189 ***
+## as.factor(age)59  735.862    129.316   5.690 0.0000000135 ***
+## as.factor(age)60  669.999    129.151   5.188 0.0000002221 ***
+## as.factor(age)61  566.612    127.846   4.432 0.0000095566 ***
+## as.factor(age)62  591.437    129.660   4.561 0.0000052140 ***
+## as.factor(age)63  665.568    131.487   5.062 0.0000004316 ***
+## as.factor(age)64  569.286    133.329   4.270 0.0000199645 ***
+## as.factor(age)65  458.772    140.700   3.261     0.001120 ** 
+## as.factor(age)66  370.640    142.769   2.596     0.009460 ** 
+## as.factor(age)67  314.823    151.994   2.071     0.038388 *  
+## as.factor(age)68  438.008    142.040   3.084     0.002057 ** 
+## as.factor(age)69  229.444    158.693   1.446     0.148291    
+## as.factor(age)70  438.611    158.693   2.764     0.005735 ** 
+## as.factor(age)71  303.378    142.769   2.125     0.033644 *  
+## as.factor(age)72  268.396    163.139   1.645     0.099998 .  
+## as.factor(age)73  255.121    163.139   1.564     0.117928    
+## as.factor(age)74  298.083    198.726   1.500     0.133692    
+## as.factor(age)75  394.892    160.800   2.456     0.014095 *  
+## as.factor(age)76  332.000    219.266   1.514     0.130058    
+## as.factor(age)77  514.405    207.778   2.476     0.013332 *  
+## as.factor(age)78  155.833    468.810   0.332     0.739601    
+## as.factor(age)79  325.611    191.391   1.701     0.088957 .  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 453.9 on 4544 degrees of freedom
+## Multiple R-squared:  0.1351,	Adjusted R-squared:  0.1229 
+## F-statistic: 11.09 on 64 and 4544 DF,  p-value: &lt; 0.00000000000000022
+```
+]
+
+---
+### USING BINARY AND CATEGORICAL VARIABLES
+We can also **one hot encode** the data: converting the categorical variable to **several dummies** so that everything is numeric
+
+```r
+cps &lt;- cps %&gt;% 
+  mutate(educ_nohs  = as.numeric(educ == "No high school"),
+         educ_hs    = as.numeric(educ == "High school"),
+         educ_assoc = as.numeric(educ == "Associate degree"),
+         educ_bach  = as.numeric(educ == "Bachelor's degree")) 
+```
+
+```
+##                educ educ_nohs educ_hs educ_assoc educ_bach
+## 1       High school         0       1          0         0
+## 2    No high school         1       0          0         0
+## 3       High school         0       1          0         0
+## 4 Bachelor's degree         0       0          0         1
+```
+--
+Then, we can include them as different variables in the regression using the `+` sign
+
+```r
+lm(earnings ~ educ_hs + educ_assoc + educ_bach, data = cps)
+```
+--
+.nunito[Why do we need to omit one category? ]
+
+---
+### USING BINARY AND CATEGORICAL VARIABLES
+.nunito[Why do we need to omit one category? ]
+- We are in the **multivariate case**, so we move from `\(\hat\beta = \frac{Cov(x,y)}{Var(x)}\)` to `\(\hat\beta = (\pmb{X'X})^{-1}\pmb{X'}y\)`
+
+```r
+y &lt;- as.matrix(cps$earnings)
+X &lt;- cps %&gt;% 
+  mutate(constant = 1) %&gt;% 
+  select(constant, contains("educ_")) %&gt;%  
+  as.matrix()
+```
+--
+.pull-left[
+
+```r
+dim(y)
+```
+
+```
+## [1] 4609    1
+```
+
+```r
+dim(X)
+```
+
+```
+## [1] 4609    5
+```
+
+```r
+dim(t(X))
+```
+
+```
+## [1]    5 4609
+```
+
+```r
+dim(t(X) %*% X)
+```
+
+```
+## [1] 5 5
+```
+]
+
+.pull-right[
+`\(y\)` &lt;br&gt; &lt;br&gt; &lt;br&gt;
+`\(\pmb{X}\)` &lt;br&gt; &lt;br&gt; &lt;br&gt;
+`\(\pmb{X'}\)` &lt;br&gt; &lt;br&gt; &lt;br&gt;
+`\(\pmb{X'X}\)` 
+]
+
+---
+### USING BINARY AND CATEGORICAL VARIABLES
+
+Because of perfect **multicollinearity** (no explanatory variable is a perfect linear function of other explanatory variables) it will not be posible to invert `\(\pmb{X'X}\)` 
+
+.pull-left[
+
+```r
+solve(t(X) %*% X)
+```
+
+```
+## [1] "Error in solve.default(t(X) %*% X)  system is computationally singular"
+```
+
+]
+
+.pull-right[
+`\((\pmb{X'X})^{-1}\)` 
+]
+
+
+```r
+X
+```
+
+
+```
+##       constant educ_nohs educ_hs educ_assoc educ_bach
+##  [1,]        1         0       1          0         0
+##  [2,]        1         0       0          0         1
+##  [3,]        1         1       0          0         0
+##  [4,]        1         0       1          0         0
+##  [5,]        1         0       0          1         0
+##  [6,]        1         0       0          1         0
+##  [7,]        1         0       1          0         0
+##  [8,]        1         0       0          0         1
+##  [9,]        1         0       0          0         1
+....
+```
+- constant = educ_nohs + educ_hs + educ_assoc + educ_bach
+- educ_bach = 1 - educ_nohs - educ_hs - educ_assoc
+---
+
+### USING BINARY AND CATEGORICAL VARIABLES
+We need to:
+.pull-left[
+- **Remove one category**
+
+```r
+X &lt;- cps %&gt;% 
+  mutate(constant = 1) %&gt;% 
+  select(constant, educ_hs, 
+         educ_assoc, educ_bach) %&gt;%  
+  as.matrix()
+
+solve(t(X) %*% X) %*% (t(X) %*% y)
+```
+
+```
+##                [,1]
+## constant   575.1593
+## educ_hs    231.5476
+## educ_assoc 328.8480
+## educ_bach  434.9049
+```
+
+
+```r
+lm(earnings ~ educ_hs + 
+              educ_assoc + educ_bach, 
+   cps)
+```
+
+]
+
+.pull-right[
+- Or **remove the constant** 
+
+```r
+X &lt;- cps %&gt;% 
+  select(educ_nohs, educ_hs, 
+         educ_assoc, educ_bach) %&gt;%  
+  as.matrix()
+
+solve(t(X) %*% X) %*% (t(X) %*% y)
+```
+
+```
+##                 [,1]
+## educ_nohs   575.1593
+## educ_hs     806.7068
+## educ_assoc  904.0072
+## educ_bach  1010.0642
+```
+
+
+
+```r
+lm(earnings ~ educ_nohs + educ_hs + 
+              educ_assoc + educ_bach - 1, 
+   cps)
+```
+- You can remove the constant in `lm()` by adding `-1` to the formula
+]
+
+
+---
+
+### USING BINARY AND CATEGORICAL VARIABLES
+Actually, if we don't drop anything `lm()` would still work:
+
+```r
+lm(earnings ~ educ_nohs + educ_hs + educ_assoc + educ_bach, 
+   cps)
+```
+
+```
+## 
+## Call:
+## lm(formula = earnings ~ educ_nohs + educ_hs + educ_assoc + educ_bach, 
+##     data = cps)
+## 
+## Coefficients:
+## (Intercept)    educ_nohs      educ_hs   educ_assoc    educ_bach  
+##      1010.1       -434.9       -203.4       -106.1           NA
+```
+- It will automatically drop one of the categories **but** it might not be the most adequate reference category
+- Even if **multicollinearity** does not break `lm()` you need to be mindful about it
+  - Make sure the your explanatory variables are not redundant 
+  - Multicollinearity will invalidate statistical inference (inflate standard errors) 
+- Always be **intentional** about your reference categories! 
+
+
+---
+# AGENDA
+.nunitosm[
+
+.pull-left[
+.nunitosmgrey[
+- REGRESSIONS IN R
+  - CONTINUOUS VARIABLES
+  - CATEGORICAL AND BINARY VARIABLES
+]
+- GETTING TO THE RIGHT MODEL
+  - VARIABLE TRANSFORMATION
+  - FUNCTIONAL FORM
+  - CONTROL VARIABLES
+  - INTERACTION TERMS
+
+
+]
+
+.pull-right[
+
+- INFERENCE
+
+
+- EXPORTING RESULTS
+  - REGRESSION TABLES
+  - COEFFICIENT PLOTS
+
+- PRACTICING YOUR SKILLS
+]
+ ]
+
+---
+### GETTING TO THE *RIGHT* MODEL
+We want to examine the relationship between earnings and hours worked. We might need to add a couple of things before we are happy with our model:
+- Variable transformation
+- Functional form
+- Control variables
+- Interaction terms  
+&lt;img src="04_econometrics_files/figure-html/unnamed-chunk-88-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+### GETTING TO THE *RIGHT* MODEL
+.nunito[Variable transformation]  
+What we have so far:
+&lt;img src="04_econometrics_files/figure-html/unnamed-chunk-89-1.png" style="display: block; margin: auto;" /&gt;
+- Earnings are concentrated below $2000 
+- The regression does not fit well on the **y dimension** 
+---
+### GETTING TO THE *RIGHT* MODEL
+.nunito[Variable transformation]  
+
+```r
+ggplot(cps, aes(x = earnings)) + 
+  geom_density() 
+```
+&lt;img src="04_econometrics_files/figure-html/unnamed-chunk-91-1.png" style="display: block; margin: auto;" /&gt;
+
+- Earnings are concentrated below $2000, with fewer and fewer observations after that
+- The estimated probability density function has a long right tail 
+
+--
+.center[
+.nunito[The distribution is likely log-normal!]  
+(when we take its logarithm it looks like a normal distribution)
+]
+
+---
+### GETTING TO THE *RIGHT* MODEL
+.nunito[Variable transformation]  
+
+```r
+ggplot(cps, aes(x = log(earnings))) + 
+  geom_density() 
+```
+&lt;img src="04_econometrics_files/figure-html/unnamed-chunk-93-1.png" style="display: block; margin: auto;" /&gt;
+The log-transformation is very popular in economics:
+- Several important economic variables (like wages, income, firm size, GDP) are approximately **log-normally distributed**. A normal distribution has desirable properties for our regression.
+- Reduces the impact of outliers
+- Allow for convenient interpretations in terms of **percentage changes** of the outcome variable 
+---
+### GETTING TO THE *RIGHT* MODEL
+.nunito[Variable transformation]  
+
+| Specification | Outcome var | Regressor | Interpretation of `\(\beta\)` | Name 
+| --- | --- | --- | --- | --- | --- |
+| Level-level | `\(y\)`  | `\(x\)` |$$\Delta y = \beta\Delta x$$ | Standard |   
+| Level-log | `\(y\)`  | `\(log(x)\)` |$$\Delta y = \frac{\beta}{100}\Delta x$$ | Less common |   
+| Log-level | `\(log(y)\)`  | `\(x\)` |$$\%\Delta y = (100\beta)\Delta x$$ | Semi-elasticity |  
+| Log-log | `\(log(y)\)`  | `\(log(x)\)` |$$\%\Delta y = \%\Delta \beta x$$ | Elasticity |   
+---
+### GETTING TO THE *RIGHT* MODEL
+.nunito[Variable transformation]  
+
+```r
+cps %&gt;% 
+  ggplot(aes(x = hours, y = log(earnings) )) +
+  geom_point() +
+  geom_smooth(method = "lm")
+```
+
+
+&lt;img src="04_econometrics_files/figure-html/unnamed-chunk-95-1.png" style="display: block; margin: auto;" /&gt;
+- Better! But the fit looks weird for low and high numbers of hours  
+
+---
+
+### GETTING TO THE *RIGHT* MODEL
+.nunito[FUNCTIONAL FORM]  
+
+```r
+cps %&gt;% 
+  ggplot(aes(x = hours, y = log(earnings) )) +
+  geom_point() +
+  geom_smooth(method = "lm",
+*             formula = y ~ poly(x, 2))
+```
+
+
+&lt;img src="04_econometrics_files/figure-html/unnamed-chunk-97-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+### GETTING TO THE *RIGHT* MODEL
+.nunito[FUNCTIONAL FORM]  
+
+We can rewrite our model:
+`$$log(Earnings_i) = \alpha + \beta_i Hours_i + \beta_2 Hours^2_i + \varepsilon_i$$`
+- Create the necessary variables:
+
+```r
+cps &lt;- cps %&gt;%
+  mutate(logearnings = log(earnings),
+         sqhours = hours^2)
+```
+- Run the new model:
+
+```r
+lm(logearnings ~ hours + sqhours, cps )
+```
+
+```
+## 
+## Call:
+## lm(formula = logearnings ~ hours + sqhours, data = cps)
+## 
+## Coefficients:
+## (Intercept)        hours      sqhours  
+##   4.1087277    0.0934110   -0.0006587
+```
+
+---
+### GETTING TO THE *RIGHT* MODEL
+.nunito[FUNCTIONAL FORM] 
+Are we missing something?  
+--
+
+- This relationship might be **driven** by **something else**. People who work more hours are different than people who work less hours in ways that also affect earnings. **How is this called?** 
+
+--
+
+For example:  
+ 
+
+.pull-left[
+- Men tend to work **full time more often** and **earn more**
+- Higher hours are highly correlated with being a man, being a man is also correlated with higher wages
+
+
+
+```r
+cps &lt;- 
+  cps %&gt;% 
+  mutate(male = 
+           as.numeric(sex == "Male"))
+```
+
+
+```r
+lm(hours ~ male, cps) 
+```
+
+```
+## (Intercept)        male 
+##   34.013288    3.527574
+```
+]
+.pull-right[
+We want to control for this in the regression:
+`$$log(Earnings_i) = \alpha + \beta_1 Hours_i + \beta_2 Hours^2_i + \beta_3 Male_i + \varepsilon_i$$`
+
+| | Male = 0 | Male = 1 | 
+| - | - | - |
+| Intercept | `$$\alpha$$` | $$ \alpha + \beta_3$$ |
+| Slope | `$$\beta_1 + 2 \beta_2 Hours$$` | `$$\beta_1 + 2 \beta_2 Hours$$` | 
+
+
+-&gt; Men and women have the **same slope** but **different intercepts** 
+]
+
+
+
+
+
+---
+### GETTING TO THE *RIGHT* MODEL
+.nunito[CONTROL VARIABLES] 
+
+
+&lt;img src="04_econometrics_files/figure-html/unnamed-chunk-103-1.png" style="display: block; margin: auto;" /&gt;
+---
+### GETTING TO THE *RIGHT* MODEL
+.nunito[CONTROL VARIABLES] 
+
+How do the coefficients of both models compare? 
+
+```r
+lm(logearnings ~ hours + sqhours + male, cps)
+```
+
+```
+##   (Intercept)         hours       sqhours          male 
+##  4.0945625390  0.0933176308 -0.0006649689  0.0528821933
+```
+
+
+```r
+lm(logearnings ~ hours + sqhours, cps)
+```
+
+```
+##   (Intercept)         hours       sqhours 
+##  4.1087276823  0.0934110198 -0.0006587048
+```
+
+&lt;br&gt; 
+.center[.nunito[The omitted variable bias was not too big in this case]]
+- Beware of violently adding controls (more on this in Econometrics 3 for a deep dive on identification). 
+- [A Crash Course in Good and Bad Controls](https://ftp.cs.ucla.edu/pub/stat_ser/r493.pdf)
+
+---
+### GETTING TO THE *RIGHT* MODEL
+.nunito[INTERACTION TERMS] 
+We only allowed the **intercept** to vary by gender. What if we want the **slope** to vary too?
+- The relationship between hours and earnings might be heterogeneous between **men** and **women**
+- We allow `\(\beta\)` to vary by gender with an interaction term
+
+`$$log(Earnings_i) = \alpha + \beta_1 Hours_i + \beta_2 Hours^2_i + \beta_3 Male_i + \beta_4 Hours_i \times Male_i + \varepsilon_i$$`
+
+| | Male = 0 | Male = 1 | 
+| - | - | - |
+| Intercept | `$$\alpha$$` | $$ \alpha + \beta_3$$ |
+| Slope | `$$\beta_1 + 2 \beta_2 Hours$$` | `$$\beta_1 + 2 \beta_2 Hours + \beta_4$$` | 
+
+
+-&gt; Men and women have **different slopes** and **different intercepts** 
+
+---
+### GETTING TO THE *RIGHT* MODEL
+.nunito[INTERACTION TERMS] 
+
+&lt;img src="04_econometrics_files/figure-html/unnamed-chunk-108-1.png" style="display: block; margin: auto;" /&gt;
+---
+### GETTING TO THE *RIGHT* MODEL
+.nunito[INTERACTION TERMS]  
+
+We specify interaction terms with a `*`
+
+```r
+mod &lt;- lm(logearnings ~ hours + sqhours + male + male*hours, cps)
+results &lt;- summary(mod)$coefficients
+```
+
+```
+##                  Estimate   Std. Error    t value     Pr(&gt;|t|)
+## (Intercept)  4.1714631273 0.0378575672 110.188357 0.0000000000
+## hours        0.0930787301 0.0020751060  44.854928 0.0000000000
+## sqhours     -0.0007196841 0.0000329061 -21.870832 0.0000000000
+## male        -0.2348248075 0.0482515339  -4.866681 0.0000011728
+## hours:male   0.0080331447 0.0013030271   6.164987 0.0000000008
+```
+&lt;br&gt;
+.center[.nunito[What can we conclude?] ]
+
+---
+
+
+# AGENDA
+.nunitosm[
+
+.pull-left[
+.nunitosmgrey[
+- REGRESSIONS IN R
+  - CONTINUOUS VARIABLES
+  - CATEGORICAL AND BINARY VARIABLES
+
+- GETTING TO THE RIGHT MODEL
+  - VARIABLE TRANSFORMATION
+  - FUNCTIONAL FORM
+  - CONTROL VARIABLES
+  - INTERACTION TERMS]
+
+
+]
+
+.pull-right[
+
+- INFERENCE
+
+
+- EXPORTING RESULTS
+  - REGRESSION TABLES
+  - COEFFICIENT PLOTS
+
+- PRACTICING YOUR SKILLS
+]
+ ]
+
+---
+### INFERENCE
+.nunito[HYPOTHESIS TESTING]  
+  - Let's assume that we know that  `\(\hat \beta_1\)` is equal to **.10** using the previous month data. Are we sure that `\(\hat \beta_1\)` is actually below .10? 
+  - How can we test whether or not our test **is below from .10**? 
+
+We want to use our sample estimates to conclude something about the population parameters!
+
+| Concept | Description | Example |
+| - | - | - |
+| **Null hypothesis** | The hypothes to evaluate | `\(H_0: \beta_1 \geq .10\)` |
+| **Alternative hypothesis** | The statement if the value differs from the null hypothesis | `\(H_1: \beta_1 &lt; .10\)` | 
+| **Test statistic** | The tool (point estimate statistic formula) we use to decide if we  reject or not the null hypothesis | `\(t = \frac{\hat\beta - .10}{s.e.(\hat\beta)}\)` | 
+|**Null distribution** | The sampling distribution of the test statistic *assuming* the null `\(H_0\)` is true | t follows a Student's t-distribution
+| **P-value** | The prob. of obtaining a test statistic just as extreme or more extreme than the observed test statistic assuming the null is true. *How surprised am I of oberving `\(t\)` assuming `\(H_0\)` holds?* |  
+| **Significance level** | A cutof on the p-value: if the p-value does not fall below   `\(\alpha\)` we would “fail to reject `\(H_0\)` | `\(\alpha=0.05\)` 
+---
+### INFERENCE
+.nunito[HYPOTHESIS TESTING]  
+1\. State the null and alternative hypotheses 
+ `\(H_0: \beta_1 \geq .10\)`, `\(H_1: \beta_1 &lt; .10\)` 
+2\. Choose a test and significance level
+  - How many parameters do we have? (one = one-sample test, two = two-sample test)
+  
+  - Do we know the population variance? (yes =  z-test, no =  t-test)  
+3\. Compute the observed test statistic: 
+Computing the t-stat  `\(t = \frac{\hat\beta - .10}{s.e.(\hat\beta)}\)`
+
+```r
+round(results)
+```
+
+```
+##             Estimate Std. Error   t value Pr(&gt;|t|)
+## (Intercept)  4.17146    0.03786 110.18836        0
+## hours        0.09308    0.00208  44.85493        0
+## sqhours     -0.00072    0.00003 -21.87083        0
+## male        -0.23482    0.04825  -4.86668        0
+## hours:male   0.00803    0.00130   6.16499        0
+```
+
+
+```r
+t &lt;- (results[2,1] - .10) / results[2,2]
+t
+```
+
+```
+## [1] -3.335381
+```
+---
+### INFERENCE
+.nunito[HYPOTHESIS TESTING]  
+Our observed test statistic provides a measure of “evidence” against the null hypothesis. In particular, we know that under the null hypothesis, the test statistic follows a `\(t_{df} = t_{n-1}\)` = `\(t_4608\)` distribution 
+
+```r
+df &lt;- nrow(cps) - 1
+df
+```
+
+```
+## [1] 4608
+```
+&lt;img src="04_econometrics_files/figure-html/unnamed-chunk-115-1.png" style="display: block; margin: auto;" /&gt;
+- This distribution represents the distribution of sample evidence given that the null is true
+- Our observed test statistic (the dashed red line) shows that the event we observed is unlikely to occur if the null ( `\(H_0: \beta_1 \geq .10\)` ) is true. Now we want to calculate this probability more formally.
+---
+### INFERENCE
+.nunito[HYPOTHESIS TESTING]  
+
+4\. Compute the p-value
+The p-value is the probability of getting sample evidence as or more extreme than what we actually observed given that the null hypothesis is actually true. 
+
+Since we are working with a "smaller-than" alternative hypothesis: 
+$$\text{p-value} = P(t_{df} &lt; t_{obs} | H_0 \text{ is true}) $$
+
+```r
+pt(t, df = df, lower.tail = TRUE)
+```
+
+```
+## [1] 0.0004292814
+```
+
+5\. Make a statistical decision and interpret the results:
+$$ \text{if p-value } \leq \alpha \text{ reject } H_0 $$
+$$ \text{if p-value } &gt; \alpha \text{ fail to reject } H_0 $$
+- Since `\(\alpha\)`is the maximum p-value at which we reject  `\(H_0\)`, then we are ensuring that there is at most a `\(100\times \alpha \%\)` chance of making a type I error (reject the null when it is true): a 5% chance of mistakenly deciding that `\(\beta_1 \geq .10\)` when `\(\beta_1 &lt; .10\)`
+
+---
+
+### INFERENCE
+.nunito[HYPOTHESIS TESTING]  
+We can use the `linearHypothesis()` function from the `{car}` package to carry out one and two-sample t-tests in R.
+- The first argument is the **model**
+- The second argument is the **null hypothesis**  
+
+```
+## Linear hypothesis test
+## 
+## Hypothesis:
+## male = 0
+## 
+## Model 1: restricted model
+## Model 2: logearnings ~ hours + sqhours + male + hours * male
+## 
+##   Res.Df    RSS Df Sum of Sq      F      Pr(&gt;F)    
+## 1   4605 773.82                                    
+## 2   4604 769.86  1    3.9604 23.685 0.000001173 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+---
+
+### INFERENCE
+.nunito[HYPOTHESIS TESTING]  
+We can also use it to carry out **F-tests** for joint significance 
+
+```r
+linearHypothesis(
+  lm(logearnings ~ hours + sqhours + male + hours*male, cps),
+       c("hours = 0", "sqhours = 0", "male = 0", "hours:male = 0"))
+```
+
+```
+## Linear hypothesis test
+## 
+## Hypothesis:
+## hours = 0
+## sqhours = 0
+## male = 0
+## hours:male = 0
+## 
+## Model 1: restricted model
+## Model 2: logearnings ~ hours + sqhours + male + hours * male
+## 
+##   Res.Df     RSS Df Sum of Sq    F                Pr(&gt;F)    
+## 1   4608 2056.79                                            
+## 2   4604  769.86  4    1286.9 1924 &lt; 0.00000000000000022 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+```r
+mod &lt;- lm(logearnings ~ hours + sqhours + male + hours*male, cps)
+summary(mod)$fstatistic
+```
+
+```
+##   value   numdf   dendf 
+## 1924.05    4.00 4604.00
+```
+
+
+
+---
+
+
+# AGENDA
+.nunitosm[
+
+.pull-left[
+.nunitosmgrey[
+- REGRESSIONS IN R
+  - CONTINUOUS VARIABLES
+  - CATEGORICAL AND BINARY VARIABLES
+
+- GETTING TO THE RIGHT MODEL
+  - VARIABLE TRANSFORMATION
+  - FUNCTIONAL FORM
+  - CONTROL VARIABLES
+  - INTERACTION TERMS
+]
+
+]
+
+.pull-right[
+.nunitosmgrey[
+
+- INFERENCE
+]
+
+- EXPORTING RESULTS
+  - REGRESSION TABLES
+  - COEFFICIENT PLOTS
+
+- PRACTICING YOUR SKILLS
+]
+ ]
+---
+ 
+### EXPORTING RESULTS 
+Eventually, we want to format our regression results into tables to include in our **papers** and **reports**. In general, they look like this: 
+&lt;img src="inputs/04_regtable.png" width="80%" style="display: block; margin: auto;" /&gt;
+
+
+---
+### EXPORTING RESULTS 
+There are many different packages to produce regression tables:   
+`{stargazer}`  `{gtsummary}` `{huxtable}` `{fixest}` `{modelsummary}`
+
+We'll work with the `huxreg()` function from the `{huxtable}` package. Main arguments:
+- Many **models**, with a name or automatically numbered 
+- 
+- 
+- 
+- 
+- 
+
+```r
+outreg &lt;- huxreg(Baseline = lm(logearnings ~ hours, cps),
+                lm(logearnings ~ hours + sqhours, cps),
+                lm(logearnings ~ hours + sqhours + male, cps),
+                lm(logearnings ~ hours + sqhours + male + male*hours, cps),
+#
+#                
+#
+#
+#
+```
+---
+### EXPORTING RESULTS 
+There are many different packages to produce regression tables:   
+`{stargazer}`  `{gtsummary}` `{huxtable}` `{fixest}` `{modelsummary}`
+
+We'll work with the `huxreg()` function from the `{huxtable}` package. Main arguments:
+- Many **models**, with a name or automatically numbered  
+- Which **uncertainty statistic** to display (std.error, p.value, conf.low, conf.high)
+- 
+- 
+- 
+- 
+
+```r
+outreg &lt;- huxreg(Baseline = lm(logearnings ~ hours, cps),
+                lm(logearnings ~ hours + sqhours, cps),
+                lm(logearnings ~ hours + sqhours + male, cps),
+                lm(logearnings ~ hours + sqhours + male + male*hours, cps),
+                error_format = "({std.error})",
+#                
+#
+#
+#
+```
+---
+### EXPORTING RESULTS 
+There are many different packages to produce regression tables:   
+`{stargazer}`  `{gtsummary}` `{huxtable}` `{fixest}` `{modelsummary}`
+
+We'll work with the `huxreg()` function from the `{huxtable}` package. Main arguments:
+- Many **models**, with a name or automatically numbered  
+- Which **uncertainty statistic** to display (std.error, p.value, conf.low, conf.high)
+- Where to **place** the uncertainty statistic (below, same, right),
+- 
+- 
+- 
+
+```r
+outreg &lt;- huxreg(Baseline = lm(logearnings ~ hours, cps),
+                lm(logearnings ~ hours + sqhours, cps),
+                lm(logearnings ~ hours + sqhours + male, cps),
+                lm(logearnings ~ hours + sqhours + male + male*hours, cps),
+                error_format = "({std.error})",
+                error_pos = "below",
+#
+#
+#
+```
+---
+### EXPORTING RESULTS 
+There are many different packages to produce regression tables:   
+`{stargazer}`  `{gtsummary}` `{huxtable}` `{fixest}` `{modelsummary}`
+
+We'll work with the `huxreg()` function from the `{huxtable}` package. Main arguments:
+- Many **models**, with a name or automatically numbered  
+- Which **uncertainty statistic** to display (std.error, p.value, conf.low, conf.high)
+- Where to **place** the uncertainty statistic (below, same, right),
+- Which **general statistics** to display (adj.r.squared, df, ...)
+- 
+- 
+
+```r
+outreg &lt;- huxreg(Baseline = lm(logearnings ~ hours, cps),
+                lm(logearnings ~ hours + sqhours, cps),
+                lm(logearnings ~ hours + sqhours + male, cps),
+                lm(logearnings ~ hours + sqhours + male + male*hours, cps),
+                error_format = "({std.error})",
+                error_pos = "below",
+                statistics = c(N = "nobs", R2 = "r.squared"),
+#
+#
+```
+---
+### EXPORTING RESULTS 
+There are many different packages to produce regression tables:   
+`{stargazer}`  `{gtsummary}` `{huxtable}` `{fixest}` `{modelsummary}`
+
+We'll work with the `huxreg()` function from the `{huxtable}` package. Main arguments:
+- Many **models**, with a name or automatically numbered  
+- Which **uncertainty statistic** to display (std.error, p.value, conf.low, conf.high)
+- Where to **place** the uncertainty statistic (below, same, right),
+- Which **general statistics** to display (adj.r.squared, df, ...)
+- The designed **significance symbols**
+- 
+
+```r
+outreg &lt;- huxreg(Baseline = lm(logearnings ~ hours, cps),
+                lm(logearnings ~ hours + sqhours, cps),
+                lm(logearnings ~ hours + sqhours + male, cps),
+                lm(logearnings ~ hours + sqhours + male + male*hours, cps),
+                error_format = "({std.error})",
+                error_pos = "below",
+                statistics = c(N = "nobs", R2 = "r.squared"),
+                stars = c(`***` = 0.01, `**` = 0.05, `*` = 0.1),
+#
+```
+---
+### EXPORTING RESULTS 
+There are many different packages to produce regression tables:   
+`{stargazer}`  `{gtsummary}` `{huxtable}` `{fixest}` `{modelsummary}`
+
+We'll work with the `huxreg()` function from the `{huxtable}` package. Main arguments:
+- Many **models**, with a name or automatically numbered
+- Which **uncertainty statistic** to display (std.error, p.value, conf.low, conf.high)
+- Where to **place** the uncertainty statistic (below, same, right),
+- Which **general statistics** to display (adj.r.squared, df, ...)
+- The designed **significance symbols**
+- What to write in the **footnote** 
+
+```r
+outreg &lt;- huxreg(Baseline = lm(logearnings ~ hours, cps),
+                lm(logearnings ~ hours + sqhours, cps),
+                lm(logearnings ~ hours + sqhours + male, cps),
+                lm(logearnings ~ hours + sqhours + male + male*hours, cps),
+                error_format = "({std.error})",
+                error_pos = "below",
+                statistics = c(N = "nobs", R2 = "r.squared"),
+                stars = c(`***` = 0.01, `**` = 0.05, `*` = 0.1),
+                note = "Dependent variable: log weekly earnings. {stars}") 
+```
+
+---
+### EXPORTING RESULTS
+We get somthing like this in the console:
+
+```r
+ ───────────────────────────────────────────────────────────────────────────────────────────
+                        Baseline             (2)               (3)               (4)        
+                   ─────────────────────────────────────────────────────────────────────────
+   (Intercept)             4.678 ***         4.109 ***         4.095 ***         4.171 ***  
+                          (0.024)           (0.036)           (0.036)           (0.038)     
+   hours                   0.052 ***         0.093 ***         0.093 ***         0.093 ***  
+                          (0.001)           (0.002)           (0.002)           (0.002)     
+   sqhours                                  -0.001 ***        -0.001 ***        -0.001 ***  
+                                            (0.000)           (0.000)           (0.000)     
+   male                                                        0.053 ***        -0.235 ***  
+                                                              (0.012)           (0.048)     
+   hours:male                                                                    0.008 ***  
+                                                                                (0.001)     
+                   ─────────────────────────────────────────────────────────────────────────
+   N                    4609              4609              4609              4609          
+   R2                      0.586             0.621             0.623             0.626      
+ ───────────────────────────────────────────────────────────────────────────────────────────
+   Dependent variable: log weekly earnings.  *** p &lt; 0.01; ** p &lt; 0.05; * p &lt;           
+   0.1                                                                                
+```
+- We can export it with the functions: `quick_latex()`, `quick_html()`, `quick_pdf()`, `quick_docx()`, `quick_xlsx()`,
+---
+### EXPORTING RESULTS
+
+```r
+quick_latex(outreg, file = "./inputs/04_regtable.tex")
+```
+&lt;img src="inputs/04_latex_screenshot.png" width="80%" style="display: block; margin: auto;" /&gt;
+---
+
+### EXPORTING RESULTS
+
+<table class="huxtable" style="border-collapse: collapse; border: 0px; margin-bottom: 2em; margin-top: 2em; ; margin-left: auto; margin-right: auto;  " id="tab:unnamed-chunk-131">
+<col><col><col><col><col><tr>
+<th style="vertical-align: top; text-align: center; white-space: normal; border-style: solid solid solid solid; border-width: 0.8pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;"></th><th style="vertical-align: top; text-align: center; white-space: normal; border-style: solid solid solid solid; border-width: 0.8pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">Baseline</th><th style="vertical-align: top; text-align: center; white-space: normal; border-style: solid solid solid solid; border-width: 0.8pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">(2)</th><th style="vertical-align: top; text-align: center; white-space: normal; border-style: solid solid solid solid; border-width: 0.8pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">(3)</th><th style="vertical-align: top; text-align: center; white-space: normal; border-style: solid solid solid solid; border-width: 0.8pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">(4)</th></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">(Intercept)</th><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">4.678 ***</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">4.109 ***</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">4.095 ***</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">4.171 ***</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;"></th><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">(0.024)&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">(0.036)&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">(0.036)&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">(0.038)&nbsp;&nbsp;&nbsp;</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">hours</th><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.052 ***</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.093 ***</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.093 ***</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.093 ***</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;"></th><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">(0.001)&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">(0.002)&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">(0.002)&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">(0.002)&nbsp;&nbsp;&nbsp;</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">sqhours</th><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">-0.001 ***</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">-0.001 ***</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">-0.001 ***</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;"></th><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">(0.000)&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">(0.000)&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">(0.000)&nbsp;&nbsp;&nbsp;</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">male</th><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.053 ***</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">-0.235 ***</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;"></th><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">(0.012)&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">(0.048)&nbsp;&nbsp;&nbsp;</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">hours:male</th><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.008 ***</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;"></th><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">(0.001)&nbsp;&nbsp;&nbsp;</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">N</th><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">4609&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">4609&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">4609&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">4609&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">R2</th><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.586&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.621&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.623&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.626&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
+<tr>
+<th colspan="5" style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0.8pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">Dependent variable: log weekly earnings.  *** p &lt; 0.01;  ** p &lt; 0.05;  * p &lt; 0.1</th></tr>
+</table>
+
+
+---
+class: inverse
+### PRACTICE
+Use the functions `huxreg()`, `insert_row()` and `merge_cells()` to reproduce this table and export it to html.  
+
+
+
+&lt;img src="inputs/04_practice.png" width="55%" style="display: block; margin: auto;" /&gt;
+<div class="countdown" id="timer_38034ec3" data-update-every="1" tabindex="0" style="right:0;bottom:0;">
+<div class="countdown-controls"><button class="countdown-bump-down">&minus;</button><button class="countdown-bump-up">&plus;</button></div>
+<code class="countdown-time"><span class="countdown-digits minutes">10</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
+</div>
+
+---
+### PRACTICE 
+
+```r
+huxreg(lm(logearnings ~ hours, cps),
+       lm(logearnings ~ hours + sqhours, cps),
+       lm(logearnings ~ hours + sqhours + male, cps),
+       lm(logearnings ~ hours + sqhours + male + male*hours, cps),
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+```
+---
+### PRACTICE 
+
+```r
+huxreg(lm(logearnings ~ hours, cps),
+       lm(logearnings ~ hours + sqhours, cps),
+       lm(logearnings ~ hours + sqhours + male, cps),
+       lm(logearnings ~ hours + sqhours + male + male*hours, cps),
+       error_format = "({p.value})",
+       error_pos = "below",
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+```
+---
+
+### PRACTICE 
+
+```r
+huxreg(lm(logearnings ~ hours, cps),
+       lm(logearnings ~ hours + sqhours, cps),
+       lm(logearnings ~ hours + sqhours + male, cps),
+       lm(logearnings ~ hours + sqhours + male + male*hours, cps),
+       error_format = "({p.value})",
+       error_pos = "below",
+       statistics = c(N = "nobs", "R2 adj." = "adj.r.squared"),
+       stars = c(`***` = 0.01, `**` = 0.05, `*` = 0.1),
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+```
+---
+### PRACTICE 
+
+```r
+huxreg(lm(logearnings ~ hours, cps),
+       lm(logearnings ~ hours + sqhours, cps),
+       lm(logearnings ~ hours + sqhours + male, cps),
+       lm(logearnings ~ hours + sqhours + male + male*hours, cps),
+       error_format = "({p.value})",
+       error_pos = "below",
+       statistics = c(N = "nobs", "R2 adj." = "adj.r.squared"),
+       stars = c(`***` = 0.01, `**` = 0.05, `*` = 0.1),
+        coefs = c("Hours worked" = "hours",
+                 "(Hours worked)²" = "sqhours",
+                 "Male" = "male",
+                 "Hours worked x Male" = "hours:male",
+                 "Constant" = "(Intercept)"),
+#
+#
+#
+#
+#
+#
+#
+#
+```
+---
+### PRACTICE 
+
+```r
+huxreg(lm(logearnings ~ hours, cps),
+       lm(logearnings ~ hours + sqhours, cps),
+       lm(logearnings ~ hours + sqhours + male, cps),
+       lm(logearnings ~ hours + sqhours + male + male*hours, cps),
+       error_format = "({p.value})",
+       error_pos = "below",
+       statistics = c(N = "nobs", "R2 adj." = "adj.r.squared"),
+       stars = c(`***` = 0.01, `**` = 0.05, `*` = 0.1),
+        coefs = c("Hours worked" = "hours",
+                 "(Hours worked)²" = "sqhours",
+                 "Male" = "male",
+                 "Hours worked x Male" = "hours:male",
+                 "Constant" = "(Intercept)"),
+       note = "P-values in parentheses. {stars}",
+       align = "c") %&gt;% 
+#
+#
+#
+#
+#
+#
+```
+---
+### PRACTICE 
+
+```r
+huxreg(lm(logearnings ~ hours, cps),
+       lm(logearnings ~ hours + sqhours, cps),
+       lm(logearnings ~ hours + sqhours + male, cps),
+       lm(logearnings ~ hours + sqhours + male + male*hours, cps),
+       error_format = "({p.value})",
+       error_pos = "below",
+       statistics = c(N = "nobs", "R2 adj." = "adj.r.squared"),
+       stars = c(`***` = 0.01, `**` = 0.05, `*` = 0.1),
+        coefs = c("Hours worked" = "hours",
+                 "(Hours worked)²" = "sqhours",
+                 "Male" = "male",
+                 "Hours worked x Male" = "hours:male",
+                 "Constant" = "(Intercept)"),
+       note = "P-values in parentheses. {stars}",
+       align = "c") %&gt;% 
+  insert_row(c("", "Dependent variable: Log weekly earnings", rep("", 3))) %&gt;% 
+#
+#
+#
+#
+#
+```
+---
+
+### PRACTICE 
+
+```r
+huxreg(lm(logearnings ~ hours, cps),
+       lm(logearnings ~ hours + sqhours, cps),
+       lm(logearnings ~ hours + sqhours + male, cps),
+       lm(logearnings ~ hours + sqhours + male + male*hours, cps),
+       error_format = "({p.value})",
+       error_pos = "below",
+       statistics = c(N = "nobs", "R2 adj." = "adj.r.squared"),
+       stars = c(`***` = 0.01, `**` = 0.05, `*` = 0.1),
+        coefs = c("Hours worked" = "hours",
+                 "(Hours worked)²" = "sqhours",
+                 "Male" = "male",
+                 "Hours worked x Male" = "hours:male",
+                 "Constant" = "(Intercept)"),
+       note = "P-values in parentheses. {stars}",
+       align = "c") %&gt;% 
+  insert_row(c("", "Dependent variable: Log weekly earnings", rep("", 3))) %&gt;% 
+  merge_cells(1, 2:5) %&gt;% 
+#
+#
+#
+```
+---
+
+
+### PRACTICE 
+
+```r
+huxreg(lm(logearnings ~ hours, cps),
+       lm(logearnings ~ hours + sqhours, cps),
+       lm(logearnings ~ hours + sqhours + male, cps),
+       lm(logearnings ~ hours + sqhours + male + male*hours, cps),
+       error_format = "({p.value})",
+       error_pos = "below",
+       statistics = c(N = "nobs", "R2 adj." = "adj.r.squared"),
+       stars = c(`***` = 0.01, `**` = 0.05, `*` = 0.1),
+        coefs = c("Hours worked" = "hours",
+                 "(Hours worked)²" = "sqhours",
+                 "Male" = "male",
+                 "Hours worked x Male" = "hours:male",
+                 "Constant" = "(Intercept)"),
+       note = "P-values in parentheses. {stars}",
+       align = "c") %&gt;% 
+  insert_row(c("", "Dependent variable: Log weekly earnings", rep("", 3))) %&gt;% 
+  merge_cells(1, 2:5) %&gt;% 
+  set_align(1, 2, "center")
+#
+#
+```
+
+---
+
+
+### PRACTICE 
+
+---
+### EXPORTING RESULTS
+You can do many more things with `huxreg()` and `huxtable()`. See [here](https://hughjonesd.github.io/huxtable/huxtable.html) for more details. 
+<table class="huxtable" style="border-collapse: collapse; border: 0px; margin-bottom: 2em; margin-top: 2em; ; margin-left: auto; margin-right: auto;  " id="tab:unnamed-chunk-143">
+<col><col><col><col><col><tr>
+<th style="vertical-align: top; text-align: center; white-space: normal; border-style: solid solid solid solid; border-width: 0.8pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;"></th><th style="vertical-align: top; text-align: center; white-space: normal; border-style: solid solid solid solid; border-width: 0.8pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">(1)</th><th style="vertical-align: top; text-align: center; white-space: normal; border-style: solid solid solid solid; border-width: 0.8pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">(2)</th><th style="vertical-align: top; text-align: center; white-space: normal; border-style: solid solid solid solid; border-width: 0.8pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">(3)</th><th style="vertical-align: top; text-align: center; white-space: normal; border-style: solid solid solid solid; border-width: 0.8pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">(4)</th></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;"><span style="color: rgb(160, 32, 240);">Hours worked</span></th><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.052 ***</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.093 ***</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.093 ***</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.093 ***</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;"><span style="color: rgb(160, 32, 240);"></span></th><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">(0.000)</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">(0.000)</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">(0.000)</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">(0.000)</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">(Hours worked)²</th><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;"></td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">-0.001 ***</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">-0.001 ***</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">-0.001 ***</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;"></th><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;"></td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">(0.000)</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">(0.000)</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">(0.000)</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; background-color: rgb(255, 255, 0); font-weight: normal;">Male</th><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; background-color: rgb(255, 255, 0); font-weight: normal;"></td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; background-color: rgb(255, 255, 0); font-weight: normal;"></td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; background-color: rgb(255, 255, 0); font-weight: normal;">0.053 ***</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; background-color: rgb(255, 255, 0); font-weight: normal;">-0.235 ***</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;"></th><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;"></td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;"></td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">(0.000)</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">(0.000)</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">Hours worked x Male</th><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;"></td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;"></td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;"></td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.008 ***</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;"></th><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;"></td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;"></td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;"></td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">(0.000)</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">Constant</th><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">4.678 ***</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">4.109 ***</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">4.095 ***</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">4.171 ***</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;"></th><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">(0.000)</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">(0.000)</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">(0.000)</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">(0.000)</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">N</th><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">4609</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">4609</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">4609</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">4609</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">R2 adj.</th><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.586</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.621</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.622</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.625</td></tr>
+<tr>
+<th colspan="5" style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0.8pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">P-values in parentheses.  *** p &lt; 0.01;  ** p &lt; 0.05;  * p &lt; 0.1</th></tr>
+</table>
+
+
+
+---
+### EXPORTING RESULTS
+.nunito[PLOT COEFFICIENTS]
+It might be useful to provide a **graphical representation** of the coefficients
+- You can do it with **dplyr**, **gplot** and extracting elements from the regression object with `$`
+
+-We can use a **shortcut** using the `plot_summs()` function from the `{jtools}` package. You can:
+  - Include one or many **models**
+  - 
+  -  
+  -  
+  -  
+
+
+```r
+plot_summs(lm(logearnings ~ hours + sqhours, cps),
+           lm(logearnings ~ hours + sqhours + male, cps),
+           lm(logearnings ~ hours + sqhours + male + educ_hs + educ_assoc + educ_bach, cps),
+#
+#
+#
+#
+```
+---
+
+### EXPORTING RESULTS
+.nunito[PLOT COEFFICIENTS]
+It might be useful to provide a **graphical representation** of the coefficients
+- You can do it with **dplyr**, **gplot** and extracting elements from the regression object with `$`
+
+-We can use a **shortcut** using the `plot_summs()` function from the `{jtools}` package. You can:
+  - Include one or many **models**
+  - Specify **coefficients** to omit from the plot
+  -  
+  -  
+  -  
+
+
+```r
+plot_summs(lm(logearnings ~ hours + sqhours, cps),
+           lm(logearnings ~ hours + sqhours + male, cps),
+           lm(logearnings ~ hours + sqhours + male + educ_hs + educ_assoc + educ_bach, cps),
+           omit.coefs = "(Intercept)",
+#
+#
+#
+```
+---
+
+### EXPORTING RESULTS
+.nunito[PLOT COEFFICIENTS]
+It might be useful to provide a **graphical representation** of the coefficients
+- You can do it with **dplyr**, **gplot** and extracting elements from the regression object with `$`
+
+-We can use a **shortcut** using the `plot_summs()` function from the `{jtools}` package. You can:
+  - Include one or many **models**
+  - Specify **coefficients** to omit from the plot
+  - Change the level of the **confidence intervals**
+  -  
+  -  
+
+
+```r
+plot_summs(lm(logearnings ~ hours + sqhours, cps),
+           lm(logearnings ~ hours + sqhours + male, cps),
+           lm(logearnings ~ hours + sqhours + male + educ_hs + educ_assoc + educ_bach, cps),
+           omit.coefs = "(Intercept)",
+           ci_level = 0.99,
+#
+#
+```
+---
+
+### EXPORTING RESULTS
+.nunito[PLOT COEFFICIENTS]
+It might be useful to provide a **graphical representation** of the coefficients
+- You can do it with **dplyr**, **gplot** and extracting elements from the regression object with `$`
+
+-We can use a **shortcut** using the `plot_summs()` function from the `{jtools}` package. You can:
+  - Include one or many **models**
+  - Specify **coefficients** to omit from the plot
+  - Change the level of the **confidence intervals**
+  - Choose a **color palette**
+  -  
+
+
+```r
+plot_summs(lm(logearnings ~ hours + sqhours, cps),
+           lm(logearnings ~ hours + sqhours + male, cps),
+           lm(logearnings ~ hours + sqhours + male + educ_hs + educ_assoc + educ_bach, cps),
+           omit.coefs = "(Intercept)",
+           ci_level = 0.99,
+           colors = c( "#296EB4","#D84727","#69995D")) + 
+#
+```
+---
+
+### EXPORTING RESULTS
+.nunito[PLOT COEFFICIENTS]
+It might be useful to provide a **graphical representation** of the coefficients
+- You can do it with **dplyr**, **gplot** and extracting elements from the regression object with `$`
+
+-We can use a **shortcut** using the `plot_summs()` function from the `{jtools}` package. You can:
+  - Include one or many **models**
+  - Specify **coefficients** to omit from the plot
+  - Change the level of the **confidence intervals**
+  - Choose a **color palette**
+  - Other functions from **ggplot** ...
+
+
+```r
+plot_summs(lm(logearnings ~ hours + sqhours, cps),
+           lm(logearnings ~ hours + sqhours + male, cps),
+           lm(logearnings ~ hours + sqhours + male + educ_hs + educ_assoc + educ_bach, cps),
+           omit.coefs = "(Intercept)",
+           ci_level = 0.99,
+           colors = c( "#296EB4","#D84727","#69995D")) + 
+  geom_hline(yintercept = 3.5, linetype = "dotted")
+```
+---
+
+
+# AGENDA
+.nunitosm[
+
+.pull-left[
+.nunitosmgrey[
+- REGRESSIONS IN R
+  - CONTINUOUS VARIABLES
+  - CATEGORICAL AND BINARY VARIABLES
+
+- GETTING TO THE RIGHT MODEL
+  - VARIABLE TRANSFORMATION
+  - FUNCTIONAL FORM
+  - CONTROL VARIABLES
+  - INTERACTION TERMS
+]
+
+]
+
+.pull-right[
+.nunitosmgrey[
+
+- INFERENCE
+
+
+- EXPORTING RESULTS
+  - REGRESSION TABLES
+  - COEFFICIENT PLOTS
+]
+- PRACTICING YOUR SKILLS
+]
+ ]
+---
+### EXPORTING RESULTS
+.nunito[PLOT COEFFICIENTS]
+&lt;img src="04_econometrics_files/figure-html/unnamed-chunk-154-1.png" style="display: block; margin: auto;" /&gt;
+
+
+---
+### PRACTICING YOUR SKILLS
+- How can you work on improve your programming skills throughout the year?
+- A research project is too demanding and you're not ready with the basics yet!
+--
+.nunito[Replicate a paper:]
+--
+- Browse the recent issues (last 3 years) of Economics journals.
+  - **General interest:** American Economic Review, The Quarterly Journal of Economics, Econometrica, The Review of Economic Studies, Economic Journal
+  - **Fields:** Journal of Political Economy, Journal of Development Economics, Labor Economics, Journal of Public Economics
+- Many of the papers now have a replication package with data and code that you can download
+--
+- We want to ensure [reproduciblity and replicability](https://i4replication.org/reproducibility.html)
+  - Computational reproducibility: the code runs and produces the same results
+  - Replicability: ability to replicate results from scratch  
+- See [here](https://i4replication.org/Journals.html) for reports on previous replications by the Institute for Replication and papers that need a replicator.
+- Sign-up for an edition of the Replication Games organized by the Institute for Replication.
+
+---
+
+### PRACTICING YOUR SKILLS
+&lt;img src="inputs/04_montero.png" width="80%" style="display: block; margin: auto;" /&gt;
+
+---
+
+### PRACTICING YOUR SKILLS
+&lt;img src="inputs/04_replication.png" width="40%" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+### PRACTICING YOUR SKILLS
+&lt;img src="inputs/04_replicationgames.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+### RESOURCES
+- [Causal Inference: *The Mixtape* by Scott Cunningham](https://mixtape.scunning.com/). &lt;br&gt; Great book on econometrics with a special focus on causal inference (great for us economists!). 
+  - It has code examples in R, Stata and Python for each chapter. 
+  - Good for finding the right commands for each method (instrumental variables, regression discontinuity, etc. )
+- [Mostly Harmless Econometrics](https://www.mostlyharmlesseconometrics.com/) by Joshua D. Angrist and Jörn-Steffen Pischke 
+  - Best book to get "the intuition".
+  - Very useful for Econometrics 3
+
+- [Introduction to Econometrics with R course](https://scpoecon.github.io/ScPoEconometrics/linreg.html#an-example-a-log-wage-equation) by Florian Oswald, Vincent Viers, Jean-Marc Robin, Pierre Villedieu, Gustave Kenedi at Sciences Po
+
+- [A crowd-sourced checklist of the top 10 little things that drive us crazy with regression output](https://blogs.worldbank.org/impactevaluations/crowd-sourced-checklist-top-10-little-things-drive-us-crazy-regression-output)
+  - Things you need to include in your regression tables
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightLines": true,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
